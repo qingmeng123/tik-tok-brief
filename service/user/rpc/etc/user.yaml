@@ -1,0 +1,23 @@
+Name: user.rpc
+Mode: dev
+ListenOn: 0.0.0.0:9000
+
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: user.rpc
+
+Mysql:
+  DataSource: root:@XUEHUI.@tcp(127.0.0.1:3306)/tik_tok_user?charset=utf8mb4&parseTime=true
+
+CacheRedis:
+  - Host: 127.0.0.1:6379
+
+Log:
+  ServiceName: "user-rpc-srv"
+  Mode: "file"
+  Level: "debug"
+
+JWTAuth:
+  AccessSecret: "长路漫漫,唯剑作伴"
+  AccessExpire: 60000

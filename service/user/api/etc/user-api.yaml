@@ -1,0 +1,17 @@
+Name: user-api
+Host: 0.0.0.0
+Port: 8000
+
+Log:
+  ServiceName: "user-srv"
+  Mode: "file"
+  Level: "debug"
+
+JWTAuth:
+  AccessSecret: "长路漫漫,唯剑作伴"
+
+UserRPC:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: user.rpc

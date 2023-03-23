@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "./pb";   // 指定生成的Go代码在你项目中的导入路径（即其package)
+
+// 用户实体
+message User {
+  int64 userID = 1; // 用户id
+  string userName = 2; // 用户名
+  string password=3;  //密码
+  string name=4;      //昵称
+  int64 followCount = 5; // 关注总数
+  int64 followerCount = 6; // 粉丝总数
+  bool isFollow = 7; // true-已关注，false-未关注
+  string avatar = 8; //用户头像
+  string backgroundImage = 9; //用户个人页顶部大图
+  string signature = 10; //个人简介
+  int64 totalFavorited = 11; //获赞数量
+  int64 workCount = 12; //作品数量
+  int64 favoriteCount = 13; //点赞数量
+  int64 createTime=14;    //创建时间
+}
+
+//用户注册请求
+message RegisterReq{
+  string username=1;
+  string password=2;
+}
+
+//用户注册响应
+message RegisterResp{
+  int64 userID=1;
+  string token=2;
+}
+
+//用户登录请求
+message LoginReq{
+  string username=1;
+  string password=2;
+}
+//用户登录响应
+message LoginResp{
+  int64 userId = 1;
+  string token = 2;
+}
+
+//获取用户请求
+message GetUserReq{
+  int64 userID=1;
+}
+
+//获取用户响应
+message GetUserResp{
+  User user=1;
+}
+
+//获取token请求
+message GenerateTokenReq{
+  int64 userID=1;
+}
+
+//获取token响应
+message GenerateTokenResp{
+  string token=1;
+}
+
+service user{
+  //用户注册
+  rpc Register(RegisterReq)returns(RegisterResp);
+
+  //用户登录
+  rpc Login(LoginReq)returns(LoginResp);
+
+  //获取用户
+  rpc GetUser(GetUserReq)returns(GetUserResp);
+
+  //获取token
+  rpc GenerateToken(GenerateTokenReq)returns(GenerateTokenResp);
+}

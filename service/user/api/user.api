@@ -1,0 +1,89 @@
+syntax = "v1"
+
+info(
+	title: "douyin-brief"
+	desc: "用户api接口"
+	author: "duryun"
+	version: "1.0"
+)
+
+type User {
+	Id              int64  `json:"id"`
+	Username        string `json:"name"`
+	FollowCount     int64  `json:"follow_count"`
+	FollowerCount   int64  `json:"follower_count"`
+	IsFollow        bool   `json:"is_follow"`
+	Avatar          string `json:"avatar,optional"`
+	BackgroundImage string `json:"background_image,optional"`
+	Signature       string `json:"Signature,optional"`
+	TotalFavorited  int64  `json:"total_favorited,optional"`
+	WorkCount       int64  `json:"work_count,optional"`
+	FavoriteCount   int64  `json:"favorite_count,optional"`
+}
+
+//Status响应
+type StatusResponse {
+	StatusCode int32  `json:"status_code"`
+	StatusMsg  string `json:"status_msg,optional,"`
+}
+
+// 用户注册
+type RegisterRequest {
+	Username string `form:"username" validate:"required,max=32,min=1"`
+	Password string `form:"password" validate:"required,max=32,min=1"`
+}
+
+type RegisterResponse {
+	StatusResponse
+	UserID int64  `json:"user_id"`
+	Token  string `json:"token"`
+}
+
+//登录
+type (
+	LoginReq {
+		Username string `form:"username" validate:"required,max=32,min=1"`
+		Password string `form:"password" validate:"required,max=32,min=1"`
+	}
+
+	LoginResp {
+		StatusResponse
+		UserId int64  `json:"user_id,omitempty"`
+		Token  string `json:"token,omitempty"`
+	}
+)
+
+//用户信息
+type (
+	UserInfoReq {
+		UserId int64  `form:"user_id" validate:"required,gte=0"`
+		Token  string `form:"token"`
+	}
+	UserInfoResp {
+		StatusResponse
+		User User `json:"user,omitempty"`
+	}
+)
+
+@server(
+	prefix: douyin/user
+)
+service user-api {
+	@doc "注册"
+	@handler RegisterHandler
+	post /register(RegisterRequest) returns(RegisterResponse)
+	
+	@doc "登录"
+	@handler LoginHandler
+	post /login(LoginReq)returns(LoginResp)
+}
+
+@server (
+	prefix :douyin/user
+	middleware :JwtAuthMiddleware
+)
+service user-api {
+	@doc "获取用户信息"
+	@handler getUserInfo
+	get / (UserInfoReq) returns (UserInfoResp)
+}
