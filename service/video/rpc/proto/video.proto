@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+message Video {
+  int64 id = 1;
+  int64 videoId=2;// 视频唯一标识
+  int64 userId=3; //视频所属用户id
+  string playUrl = 4; // 视频播放地址
+  string coverUrl = 5; // 视频封面地址
+  int64 favoriteCount = 6; // 视频的点赞总数
+  int64 commentCount = 7; // 视频的评论总数
+  bool isFavorite = 8; // true-已点赞，false-未点赞
+  string title = 9; // 视频标题
+}
+
+//发布视频请求
+message PublishReq{
+  string title = 1;
+  int64 userId = 2;
+  string playUrl = 3;
+  string coverUrl = 4;
+}

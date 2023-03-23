@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+// 上传视频到COS请求
+message UploadVideoByCosReq{
+  string videoName = 1;
+  bytes data = 2;
+}
+// 上传视频到COS响应
+message UploadVideoByCosResp{
+  string playUrl = 1;
+  string coverUrl = 2;
+}
+
+service file{
+  rpc UploadVideoByCos(UploadVideoByCosReq)returns(UploadVideoByCosResp);
+}
