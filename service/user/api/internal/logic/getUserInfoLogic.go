@@ -26,17 +26,16 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 
 func (l *GetUserInfoLogic) GetUserInfo(req *types.UserInfoReq) (resp *types.UserInfoResp, err error) {
 	// 获取token里的user_id
-	userID:=l.ctx.Value("user_id")
-
+	userID := l.ctx.Value("user_id")
 	//获取请求的userID信息
 	user, err := l.svcCtx.UserRPC.GetUser(l.ctx, &pb.GetUserReq{UserID: req.UserId})
-	if err!=nil{
-		logx.Error("get_userinfo_logic get user err:",err)
+	if err != nil {
+		logx.Error("get_userinfo_logic get user err:", err)
 		return nil, err
 	}
 
-	resUser:=&types.User{
-		Id:            user.User.UserID,
+	resUser := &types.User{
+		Id:              user.User.UserID,
 		Username:        user.User.UserName,
 		FollowCount:     user.User.FollowCount,
 		FollowerCount:   user.User.FollowerCount,
@@ -50,16 +49,15 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.UserInfoReq) (resp *types.User
 	}
 
 	//查看自身的信息
-	if userID==req.UserId{
-		resUser.IsFollow=false
+	if userID.(int64) == req.UserId {
+		resUser.IsFollow = false
 	}
-
 
 	return &types.UserInfoResp{
 		StatusResponse: types.StatusResponse{
 			StatusCode: int32(errorx.OK),
 			StatusMsg:  errorx.SUCCESS,
 		},
-		User:           *resUser,
-	},nil
+		User: *resUser,
+	}, nil
 }

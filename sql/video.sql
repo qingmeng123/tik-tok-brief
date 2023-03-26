@@ -3,7 +3,7 @@ CREATE TABLE `video`
 (
     `id`             bigint          NOT NULL UNIQUE primary key AUTO_INCREMENT,
     `video_id`        bigint          NOT NULL UNIQUE COMMENT '视频id',
-    `user_id`        bigint          NOT NULL UNIQUE COMMENT '发布作者id',
+    `user_id`        bigint          NOT NULL  COMMENT '发布作者id',
     `title`          char(32)  NOT NULL COMMENT '视频标题',
     `play_url`       varchar(500) NOT NULL COMMENT '视频播放地址',
     `cover_url`      varchar(500) NOT NULL COMMENT '封面地址',

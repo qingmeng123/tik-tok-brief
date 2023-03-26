@@ -26,3 +26,8 @@ func (s *FileServer) UploadVideoByCos(ctx context.Context, in *pb.UploadVideoByC
 	l := logic.NewUploadVideoByCosLogic(ctx, s.svcCtx)
 	return l.UploadVideoByCos(in)
 }
+
+func (s *FileServer) UploadVideoStreamByCos(stream pb.File_UploadVideoStreamByCosServer) error {
+	l := logic.NewUploadVideoStreamByCosLogic(stream.Context(), s.svcCtx)
+	return l.UploadVideoStreamByCos(stream)
+}

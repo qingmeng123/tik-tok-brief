@@ -2,20 +2,19 @@ package svc
 
 import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"tik-tok-brief/service/user/model"
-	"tik-tok-brief/service/user/rpc/internal/config"
+	"tik-tok-brief/service/video/model"
+	"tik-tok-brief/service/video/rpc/internal/config"
 )
 
 type ServiceContext struct {
-	Config    config.Config
-	UserModel model.UserModel
+	Config     config.Config
+	VideoModel model.VideoModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	sqlxConn := sqlx.NewMysql(c.Mysql.DataSource)
-
 	return &ServiceContext{
-		Config:    c,
-		UserModel: model.NewUserModel(sqlxConn, c.CacheRedis),
+		Config:     c,
+		VideoModel: model.NewVideoModel(sqlxConn, c.CacheRedis),
 	}
 }

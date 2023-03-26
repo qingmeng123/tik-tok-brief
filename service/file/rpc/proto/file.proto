@@ -17,4 +17,8 @@ message UploadVideoByCosResp{
 
 service file{
   rpc UploadVideoByCos(UploadVideoByCosReq)returns(UploadVideoByCosResp);
+
+  //流式传输文件
+  rpc UploadVideoStreamByCos(stream UploadVideoByCosReq)returns(UploadVideoByCosResp);
 }
+

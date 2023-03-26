@@ -14,10 +14,10 @@ CacheRedis:
   - Host: 127.0.0.1:6379
 
 Log:
-  ServiceName: "user-rpc-srv"
+  ServiceName: "user-rpc"
   Mode: "file"
   Level: "debug"
 
 JWTAuth:
   AccessSecret: "长路漫漫,唯剑作伴"
-  AccessExpire: 60000
+  AccessExpire: 600000

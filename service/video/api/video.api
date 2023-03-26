@@ -1,9 +1,102 @@
 syntax = "v1"
 
 info(
-    title: "type title here"
-    desc: "type desc here"
-    author: "type author here"
-    email: "type email here"
-    version: "type version here"
+	title: "douyin-brief"
+	desc: "视频api接口"
+	author: "duryun"
+	version: "1.0"
 )
+
+type Status {
+	StatusCode uint32 `json:"status_code"`
+	StatusMsg  string `json:"status_msg"`
+}
+
+type User {
+	UserID        int64  `json:"user_id"`
+	UserName      string `json:"name"`
+	FollowCount   int64  `json:"follow_count"`
+	FollowerCount int64  `json:"follower_count"`
+	IsFollow      bool   `json:"is_follow"`
+}
+
+// 视频实体
+type Video {
+	VideoId       int64  `json:"video_id"`
+	Author        User   `json:"author"`
+	PlayUrl       string `json:"play_url"`
+	CoverUrl      string `json:"cover_url"`
+	FavoriteCount int64  `json:"favorite_count"`
+	CommentCount  int64  `json:"comment_count"`
+	IsFavorite    bool   `json:"is_favorite"`
+	Title         string `json:"title"`
+}
+
+// 发布视频
+type (
+	// 发布视频请求体
+	PublishReq {
+		Title string `form:"title" validate:"required,max=100,min=1"`
+		Token string `form:"token" validate:"required"`
+	}
+	// 发布视频返回体
+	PublishResp {
+		Status
+	}
+)
+
+//发布列表
+type (
+	PublishListReq {
+		UserId int64  `form:"user_id"`
+		Token  string `form:"token"`
+	}
+	PublishListResp {
+		Status
+		VideoList []Video `json:"video_list,omitempty"`
+	}
+)
+
+//视频流
+type (
+	FeedReq {
+		LastTime int64  `form:"lastTime,optional"`
+		Token    string `form:"token,optional"`
+	}
+
+	FeedResp {
+		Status
+		VideoList []Video `json:"videoList,omitempty"`
+		NextTime  int64   `json:"nextTime,omitempty"`
+	}
+)
+
+@server(
+	prefix : douyin/publish
+	middleware : ParseFormMiddleware
+)
+service video-api {
+	@doc "发布视频"
+	@handler PublishVideo
+	post /action (PublishReq) returns (PublishResp)
+}
+
+@server(
+	prefix : douyin/publish
+	middleware : JWTAuthMiddleware
+)
+service video-api{
+	@doc "发布视频的列表"
+	@handler PublishList
+	get /list (PublishListReq) returns (PublishListResp)
+}
+
+@server (
+	prefix : douyin/feed
+	middleware : JWTOptionalAuthMiddleware
+)
+service video-api{
+	@doc "获取视频流"
+	@handler feed
+	get / (FeedReq)returns(FeedResp)
+}

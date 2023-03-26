@@ -1,0 +1,35 @@
+Name: video-api
+Host: 0.0.0.0
+Port: 8001
+TimeOut: 10000 # 10s
+MaxBytes: 33554432 # 32M
+
+
+Log:
+  ServiceName: "video-api"
+  Mode: "file"
+  Level: "debug"
+
+FileRPC:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: file.rpc
+
+
+VideoRPC:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: video.rpc
+
+UserRPC:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: user.rpc
+
+JWTAuth:
+  AccessSecret: "长路漫漫,唯剑作伴"
+
+MaxVideoSize: 52428800

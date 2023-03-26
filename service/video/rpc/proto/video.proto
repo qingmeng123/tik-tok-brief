@@ -16,10 +16,43 @@ message Video {
   string title = 9; // 视频标题
 }
 
-//发布视频请求
-message PublishReq{
+message SaveVideoReq{
   string title = 1;
   int64 userId = 2;
   string playUrl = 3;
   string coverUrl = 4;
+}
+
+message SaveVideoResp{
+  int64 videoId=1;
+}
+
+message PublishListReq{
+  int64 userId=1;
+}
+
+message PublishListResp{
+  repeated Video videoList=1;
+}
+
+// 视频流请求体
+message FeedReq{
+  optional int64 userId = 1;
+  optional int64 lastTime = 2;
+}
+// 视频流返回体
+message FeedResp{
+  optional int64 nextTime = 1;
+  repeated Video videoList = 2;
+}
+
+service video{
+  //保存视频信息到数据库
+  rpc SaveVideo(SaveVideoReq)returns(SaveVideoResp);
+
+  //查看某用户id的视频列表
+  rpc PublishList(PublishListReq)returns(PublishListResp);
+
+  //视频流
+  rpc Feed(FeedReq)returns(FeedResp);
 }

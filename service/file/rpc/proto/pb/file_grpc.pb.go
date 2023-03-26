@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FileClient interface {
 	UploadVideoByCos(ctx context.Context, in *UploadVideoByCosReq, opts ...grpc.CallOption) (*UploadVideoByCosResp, error)
+	UploadVideoStreamByCos(ctx context.Context, opts ...grpc.CallOption) (File_UploadVideoStreamByCosClient, error)
 }
 
 type fileClient struct {
@@ -42,11 +43,46 @@ func (c *fileClient) UploadVideoByCos(ctx context.Context, in *UploadVideoByCosR
 	return out, nil
 }
 
+func (c *fileClient) UploadVideoStreamByCos(ctx context.Context, opts ...grpc.CallOption) (File_UploadVideoStreamByCosClient, error) {
+	stream, err := c.cc.NewStream(ctx, &File_ServiceDesc.Streams[0], "/pb.file/UploadVideoStreamByCos", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileUploadVideoStreamByCosClient{stream}
+	return x, nil
+}
+
+type File_UploadVideoStreamByCosClient interface {
+	Send(*UploadVideoByCosReq) error
+	CloseAndRecv() (*UploadVideoByCosResp, error)
+	grpc.ClientStream
+}
+
+type fileUploadVideoStreamByCosClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileUploadVideoStreamByCosClient) Send(m *UploadVideoByCosReq) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *fileUploadVideoStreamByCosClient) CloseAndRecv() (*UploadVideoByCosResp, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(UploadVideoByCosResp)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // FileServer is the server API for File service.
 // All implementations must embed UnimplementedFileServer
 // for forward compatibility
 type FileServer interface {
 	UploadVideoByCos(context.Context, *UploadVideoByCosReq) (*UploadVideoByCosResp, error)
+	UploadVideoStreamByCos(File_UploadVideoStreamByCosServer) error
 	mustEmbedUnimplementedFileServer()
 }
 
@@ -56,6 +92,9 @@ type UnimplementedFileServer struct {
 
 func (UnimplementedFileServer) UploadVideoByCos(context.Context, *UploadVideoByCosReq) (*UploadVideoByCosResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadVideoByCos not implemented")
+}
+func (UnimplementedFileServer) UploadVideoStreamByCos(File_UploadVideoStreamByCosServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadVideoStreamByCos not implemented")
 }
 func (UnimplementedFileServer) mustEmbedUnimplementedFileServer() {}
 
@@ -88,6 +127,32 @@ func _File_UploadVideoByCos_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _File_UploadVideoStreamByCos_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(FileServer).UploadVideoStreamByCos(&fileUploadVideoStreamByCosServer{stream})
+}
+
+type File_UploadVideoStreamByCosServer interface {
+	SendAndClose(*UploadVideoByCosResp) error
+	Recv() (*UploadVideoByCosReq, error)
+	grpc.ServerStream
+}
+
+type fileUploadVideoStreamByCosServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileUploadVideoStreamByCosServer) SendAndClose(m *UploadVideoByCosResp) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *fileUploadVideoStreamByCosServer) Recv() (*UploadVideoByCosReq, error) {
+	m := new(UploadVideoByCosReq)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // File_ServiceDesc is the grpc.ServiceDesc for File service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -100,6 +165,12 @@ var File_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _File_UploadVideoByCos_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadVideoStreamByCos",
+			Handler:       _File_UploadVideoStreamByCos_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "proto/file.proto",
 }

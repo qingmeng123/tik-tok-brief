@@ -3,7 +3,7 @@ Host: 0.0.0.0
 Port: 8000
 
 Log:
-  ServiceName: "user-srv"
+  ServiceName: "user-api"
   Mode: "file"
   Level: "debug"
 

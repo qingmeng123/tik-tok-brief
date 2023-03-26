@@ -18,6 +18,7 @@ type (
 
 	File interface {
 		UploadVideoByCos(ctx context.Context, in *UploadVideoByCosReq, opts ...grpc.CallOption) (*UploadVideoByCosResp, error)
+		UploadVideoStreamByCos(ctx context.Context, opts ...grpc.CallOption) (pb.File_UploadVideoStreamByCosClient, error)
 	}
 
 	defaultFile struct {
@@ -34,4 +35,9 @@ func NewFile(cli zrpc.Client) File {
 func (m *defaultFile) UploadVideoByCos(ctx context.Context, in *UploadVideoByCosReq, opts ...grpc.CallOption) (*UploadVideoByCosResp, error) {
 	client := pb.NewFileClient(m.cli.Conn())
 	return client.UploadVideoByCos(ctx, in, opts...)
+}
+
+func (m *defaultFile) UploadVideoStreamByCos(ctx context.Context, opts ...grpc.CallOption) (pb.File_UploadVideoStreamByCosClient, error) {
+	client := pb.NewFileClient(m.cli.Conn())
+	return client.UploadVideoStreamByCos(ctx, opts...)
 }
