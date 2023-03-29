@@ -13,5 +13,5 @@ JWTAuth:
 UserRPC:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - tik-tok-etcd:2379
     Key: user.rpc

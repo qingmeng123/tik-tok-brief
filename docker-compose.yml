@@ -1,0 +1,154 @@
+version: '3'
+
+services:
+  #MySQL
+  tik-tok-mysql:
+    image: mysql
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: root # root密码(修改要同时修改data/mysql/init/init.sql中的密码)
+    restart: on-failure
+    ports:
+      - "3306:3306"
+    volumes:
+      - /home/project/data/tik_tok/mysql/data:/var/lib/mysql
+      - /home/project/data/tik_tok/mysql/conf:/etc/mysql/conf.d/
+      - ./deploy/sql/init:/docker-entrypoint-initdb.d/
+    networks:
+      - tik-tok-net
+
+  #Redis
+  tik-tok-redis:
+    image: redis
+    #command: redis-server --requirepass root # requirepass后为密码(可修改)
+    ports:
+      - "6379:6379"
+    volumes:
+      - /home/project/data/tik_tok/redis/data:/data
+      - /home/project/data/tik_tok/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - tik-tok-net
+
+  #Etcd
+  tik-tok-etcd:
+    image: 'bitnami/etcd:latest'
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+    ports:
+      - "2379:2379"
+    networks:
+      - tik-tok-net
+
+
+  #user
+  user-api:
+    restart: always
+    build:
+      context: ./service/user/api
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/logs/user/api/logs/:/app/logs
+      - /home/project/data/tik_tok/user/api/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+      - user-rpc
+    networks:
+      - tik-tok-net
+
+  user-rpc:
+    restart: always
+    build:
+      context: ./service/user/rpc
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/logs/user/rpc/logs/:/app/logs
+      - /home/project/data/tik_tok/user/rpc/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+    networks:
+      - tik-tok-net
+
+  #video
+  video-api:
+    restart: always
+    build:
+      context: ./service/video/api
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/logs/video/api/logs/:/app/logs
+      - /home/project/data/tik_tok/video/api/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+      - user-rpc
+      - video-rpc
+      - file-rpc
+    networks:
+      - tik-tok-net
+
+  video-rpc:
+    restart: always
+    build:
+      context: ./service/video/rpc
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/logs/video/rpc/logs/:/app/logs
+      - /home/project/data/tik_tok/video/rpc/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+    networks:
+      - tik-tok-net
+
+  #file
+  file-rpc:
+    restart: always
+    build:
+      context: ./service/file/rpc
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/logs/file/rpc/logs/:/app/logs
+      - /home/project/data/tik_tok/file/rpc/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+    networks:
+      - tik-tok-net
+
+
+  nginx-gateway:
+    image: nginx
+    restart: always
+    privileged: true
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - "8888:9999"
+    volumes:
+      - ./deploy/nginx/conf.d:/etc/nginx/conf.d
+      - /home/project/data/tik_tok/nginx/log:/var/log/nginx
+    networks:
+      - tik-tok-net
+    depends_on:
+      - user-api
+      - user-rpc
+      - video-api
+      - video-rpc
+      - file-rpc
+
+networks:
+  tik-tok-net:
+    driver: bridge
