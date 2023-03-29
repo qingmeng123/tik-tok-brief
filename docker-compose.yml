@@ -43,7 +43,6 @@ services:
 
   #user
   user-api:
-    restart: always
     build:
       context: ./
       dockerfile: service/user/api/Dockerfile
@@ -61,7 +60,6 @@ services:
       - tik-tok-net
 
   user-rpc:
-    restart: always
     build:
       context: ./
       dockerfile: service/user/rpc/Dockerfile
@@ -79,7 +77,6 @@ services:
 
   #video
   video-api:
-    restart: always
     build:
       context: ./
       dockerfile: service/video/api/Dockerfile
@@ -99,7 +96,6 @@ services:
       - tik-tok-net
 
   video-rpc:
-    restart: always
     build:
       context: ./
       dockerfile: service/video/rpc/Dockerfile
@@ -117,7 +113,6 @@ services:
 
   #file
   file-rpc:
-    restart: always
     build:
       context: ./
       dockerfile: service/file/rpc/Dockerfile
