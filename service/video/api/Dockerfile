@@ -17,7 +17,7 @@ RUN go mod download
 COPY . .
 
 #将配置文件复制为执行docker-compose时能找到的路径
-COPY service/video/api/etc /video/etc
+COPY service/video/api/etc /service/etc
 #编译后放在service下
 RUN go build -ldflags="-s -w" -o /service/videoApi service/video/api/video.go
 
