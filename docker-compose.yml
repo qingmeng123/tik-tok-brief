@@ -45,7 +45,8 @@ services:
   user-api:
     restart: always
     build:
-      context: ./service/user/api
+      context: ./
+      dockerfile: service/user/api/Dockerfile
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -62,7 +63,8 @@ services:
   user-rpc:
     restart: always
     build:
-      context: ./service/user/rpc
+      context: ./
+      dockerfile: service/user/rpc/Dockerfile
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -79,7 +81,8 @@ services:
   video-api:
     restart: always
     build:
-      context: ./service/video/api
+      context: ./
+      dockerfile: service/video/api/Dockerfile
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -98,7 +101,8 @@ services:
   video-rpc:
     restart: always
     build:
-      context: ./service/video/rpc
+      context: ./
+      dockerfile: service/video/rpc/Dockerfile
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -115,7 +119,8 @@ services:
   file-rpc:
     restart: always
     build:
-      context: ./service/file/rpc
+      context: ./
+      dockerfile: service/file/rpc/Dockerfile
     environment:
       TZ: Asia/Shanghai
     volumes:
