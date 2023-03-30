@@ -4,10 +4,10 @@ LABEL stage=gobuilder
 
 ENV CGO_ENABLED 0
 ENV GOPROXY=https://goproxy.cn,https://goproxy.io,direct\
-	GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
     GOARCH=amd64
+RUN apk update --no-cache && apk add --no-cache tzdata
 
 WORKDIR /build
 
@@ -32,4 +32,4 @@ WORKDIR /app
 #将二进制文件复制到镜像中的app目录下
 COPY --from=builder /service/userApi /app/userApi
 COPY --from=builder /service/etc /app/etc
-CMD ["./userApi", "-f", "etc/user-api.yaml"]
+CMD ["./userApi", "-f", "/app/etc/user-api.yaml"]
