@@ -7,7 +7,7 @@ type Status struct {
 }
 
 type User struct {
-	UserID        int64  `json:"user_id"`
+	UserID        int64  `json:"id"`
 	UserName      string `json:"name"`
 	FollowCount   int64  `json:"follow_count"`
 	FollowerCount int64  `json:"follower_count"`
@@ -15,7 +15,7 @@ type User struct {
 }
 
 type Video struct {
-	VideoId       int64  `json:"video_id"`
+	VideoId       int64  `json:"id"`
 	Author        User   `json:"author"`
 	PlayUrl       string `json:"play_url"`
 	CoverUrl      string `json:"cover_url"`

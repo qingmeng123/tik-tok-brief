@@ -32,4 +32,4 @@ WORKDIR /app
 #将二进制文件复制到镜像中的app目录下
 COPY --from=builder /service/fileRpc /app/fileRpc
 COPY --from=builder /service/etc /app/etc
-CMD ["./fileRpc", "-f", "/app/etc/file.yaml"]
+CMD ["./fileRpc", "-f", "etc/file.yaml"]

@@ -1,7 +1,7 @@
 Name: video-api
 Host: 0.0.0.0
 Port: 8001
-TimeOut: 10000 # 10s
+TimeOut: 30000 # 30s
 MaxBytes: 33554432 # 32M
 
 
