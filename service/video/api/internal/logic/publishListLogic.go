@@ -29,7 +29,6 @@ func NewPublishListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Publi
 func (l *PublishListLogic) PublishList(req *types.PublishListReq) (resp *types.PublishListResp, err error) {
 	//token中保存的id
 	tUserId := l.ctx.Value("user_id").(int64)
-
 	//获取请求用户信息
 	getUserResp, err := l.svcCtx.UserRPC.GetUser(l.ctx, &userpb.GetUserReq{UserID: req.UserId})
 	if err != nil {
