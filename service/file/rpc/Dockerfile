@@ -1,4 +1,4 @@
-FROM golang AS builder
+FROM golang:alpine AS builder
 
 LABEL stage=gobuilder
 
@@ -16,7 +16,7 @@ ADD go.sum .
 RUN go mod download
 COPY . .
 
-#将配置文件复制为执行docker-compose时能找到的路径
+#将配置文件复制到镜像中
 COPY service/file/rpc/etc /service/etc
 #编译后放在service下
 RUN go build -ldflags="-s -w" -o /service/fileRpc service/file/rpc/file.go

@@ -1,12 +1,12 @@
-FROM golang AS builder
+FROM golang:alpine AS builder
 
 LABEL stage=gobuilder
 
-ENV CGO_ENABLED 0
 ENV GOPROXY=https://goproxy.cn,https://goproxy.io,direct\
     CGO_ENABLED=0 \
     GOOS=linux \
     GOARCH=amd64
+
 RUN apk update --no-cache && apk add --no-cache tzdata
 
 WORKDIR /build
@@ -16,7 +16,7 @@ ADD go.sum .
 RUN go mod download
 COPY . .
 
-#将配置文件复制为执行docker-compose时能找到的路径
+#将配置文件复制到镜像中
 COPY service/video/api/etc /service/etc
 #编译后放在service下
 RUN go build -ldflags="-s -w" -o /service/videoApi service/video/api/video.go
