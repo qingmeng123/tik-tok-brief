@@ -119,6 +119,7 @@ services:
     environment:
       TZ: Asia/Shanghai
     volumes:
+      - /home/project/data/tik_tok/file/rpc/static:/app/static
       - /home/project/data/tik_tok/logs/file/rpc/logs/:/app/logs
       - /home/project/data/tik_tok/file/rpc/etc:/app/etc
     depends_on:

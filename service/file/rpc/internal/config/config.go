@@ -4,7 +4,10 @@ import "github.com/zeromicro/go-zero/zrpc"
 
 type Config struct {
 	zrpc.RpcServerConf
-	Cos Cos
+	Cos                 Cos
+	LocalVideoPath      string
+	LocalCoverPath      string
+	StaticFileServiceIP string
 }
 
 type Cos struct {

@@ -27,7 +27,14 @@ func (s *FileServer) UploadVideoByCos(ctx context.Context, in *pb.UploadVideoByC
 	return l.UploadVideoByCos(in)
 }
 
+// 流式传输文件
 func (s *FileServer) UploadVideoStreamByCos(stream pb.File_UploadVideoStreamByCosServer) error {
 	l := logic.NewUploadVideoStreamByCosLogic(stream.Context(), s.svcCtx)
 	return l.UploadVideoStreamByCos(stream)
+}
+
+// 上传视频到本地
+func (s *FileServer) UploadVideoByLocal(stream pb.File_UploadVideoByLocalServer) error {
+	l := logic.NewUploadVideoByLocalLogic(stream.Context(), s.svcCtx)
+	return l.UploadVideoByLocal(stream)
 }

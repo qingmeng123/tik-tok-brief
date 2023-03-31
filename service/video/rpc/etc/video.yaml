@@ -2,14 +2,14 @@ Name: video.rpc
 ListenOn: 0.0.0.0:9002
 Etcd:
   Hosts:
-  - tik-tok-etcd:2379
+  - 127.0.0.1:2379
   Key: video.rpc
 
 Mysql:
-  DataSource: root:@XUEHUI.@tcp(tik-tok-mysql:3306)/tik_tok_video?charset=utf8mb4&parseTime=true
+  DataSource: root:@XUEHUI.@tcp(127.0.0.1:3306)/tik_tok_video?charset=utf8mb4&parseTime=true
 
 CacheRedis:
-  - Host: tik-tok-redis:6379
+  - Host: 127.0.0.1:6379
 
 Log:
   ServiceName: "user-rpc"

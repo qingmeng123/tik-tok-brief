@@ -13,20 +13,20 @@ Log:
 FileRPC:
   Etcd:
     Hosts:
-      - tik-tok-etcd:2379
+      - 127.0.0.1:2379
     Key: file.rpc
 
 
 VideoRPC:
   Etcd:
     Hosts:
-      - tik-tok-etcd:2379
+      - 127.0.0.1:2379
     Key: video.rpc
 
 UserRPC:
   Etcd:
     Hosts:
-      - tik-tok-etcd:2379
+      - 127.0.0.1:2379
     Key: user.rpc
 
 JWTAuth:

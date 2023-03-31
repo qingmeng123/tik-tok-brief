@@ -23,7 +23,10 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FileClient interface {
 	UploadVideoByCos(ctx context.Context, in *UploadVideoByCosReq, opts ...grpc.CallOption) (*UploadVideoByCosResp, error)
+	//流式传输文件
 	UploadVideoStreamByCos(ctx context.Context, opts ...grpc.CallOption) (File_UploadVideoStreamByCosClient, error)
+	// 上传视频到本地
+	UploadVideoByLocal(ctx context.Context, opts ...grpc.CallOption) (File_UploadVideoByLocalClient, error)
 }
 
 type fileClient struct {
@@ -77,12 +80,49 @@ func (x *fileUploadVideoStreamByCosClient) CloseAndRecv() (*UploadVideoByCosResp
 	return m, nil
 }
 
+func (c *fileClient) UploadVideoByLocal(ctx context.Context, opts ...grpc.CallOption) (File_UploadVideoByLocalClient, error) {
+	stream, err := c.cc.NewStream(ctx, &File_ServiceDesc.Streams[1], "/pb.file/UploadVideoByLocal", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &fileUploadVideoByLocalClient{stream}
+	return x, nil
+}
+
+type File_UploadVideoByLocalClient interface {
+	Send(*UploadVideoByLocalReq) error
+	CloseAndRecv() (*UploadVideoByLocalResp, error)
+	grpc.ClientStream
+}
+
+type fileUploadVideoByLocalClient struct {
+	grpc.ClientStream
+}
+
+func (x *fileUploadVideoByLocalClient) Send(m *UploadVideoByLocalReq) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *fileUploadVideoByLocalClient) CloseAndRecv() (*UploadVideoByLocalResp, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(UploadVideoByLocalResp)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // FileServer is the server API for File service.
 // All implementations must embed UnimplementedFileServer
 // for forward compatibility
 type FileServer interface {
 	UploadVideoByCos(context.Context, *UploadVideoByCosReq) (*UploadVideoByCosResp, error)
+	//流式传输文件
 	UploadVideoStreamByCos(File_UploadVideoStreamByCosServer) error
+	// 上传视频到本地
+	UploadVideoByLocal(File_UploadVideoByLocalServer) error
 	mustEmbedUnimplementedFileServer()
 }
 
@@ -95,6 +135,9 @@ func (UnimplementedFileServer) UploadVideoByCos(context.Context, *UploadVideoByC
 }
 func (UnimplementedFileServer) UploadVideoStreamByCos(File_UploadVideoStreamByCosServer) error {
 	return status.Errorf(codes.Unimplemented, "method UploadVideoStreamByCos not implemented")
+}
+func (UnimplementedFileServer) UploadVideoByLocal(File_UploadVideoByLocalServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadVideoByLocal not implemented")
 }
 func (UnimplementedFileServer) mustEmbedUnimplementedFileServer() {}
 
@@ -153,6 +196,32 @@ func (x *fileUploadVideoStreamByCosServer) Recv() (*UploadVideoByCosReq, error) 
 	return m, nil
 }
 
+func _File_UploadVideoByLocal_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(FileServer).UploadVideoByLocal(&fileUploadVideoByLocalServer{stream})
+}
+
+type File_UploadVideoByLocalServer interface {
+	SendAndClose(*UploadVideoByLocalResp) error
+	Recv() (*UploadVideoByLocalReq, error)
+	grpc.ServerStream
+}
+
+type fileUploadVideoByLocalServer struct {
+	grpc.ServerStream
+}
+
+func (x *fileUploadVideoByLocalServer) SendAndClose(m *UploadVideoByLocalResp) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *fileUploadVideoByLocalServer) Recv() (*UploadVideoByLocalReq, error) {
+	m := new(UploadVideoByLocalReq)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // File_ServiceDesc is the grpc.ServiceDesc for File service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -169,6 +238,11 @@ var File_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "UploadVideoStreamByCos",
 			Handler:       _File_UploadVideoStreamByCos_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "UploadVideoByLocal",
+			Handler:       _File_UploadVideoByLocal_Handler,
 			ClientStreams: true,
 		},
 	},

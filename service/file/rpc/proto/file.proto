@@ -15,10 +15,24 @@ message UploadVideoByCosResp{
   string coverUrl = 2;
 }
 
+// 上传视频到本地请求体
+message UploadVideoByLocalReq{
+  string videoName = 1;
+  bytes data = 2;
+}
+// 上传视频到本地返回体
+message UploadVideoByLocalResp{
+  string playUrl = 1;
+  string coverUrl = 2;
+}
+
 service file{
   rpc UploadVideoByCos(UploadVideoByCosReq)returns(UploadVideoByCosResp);
 
   //流式传输文件
   rpc UploadVideoStreamByCos(stream UploadVideoByCosReq)returns(UploadVideoByCosResp);
+
+  // 上传视频到本地
+  rpc UploadVideoByLocal(stream UploadVideoByLocalReq) returns(UploadVideoByLocalResp);
 }
 

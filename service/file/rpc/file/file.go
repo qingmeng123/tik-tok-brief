@@ -13,12 +13,17 @@ import (
 )
 
 type (
-	UploadVideoByCosReq  = pb.UploadVideoByCosReq
-	UploadVideoByCosResp = pb.UploadVideoByCosResp
+	UploadVideoByCosReq    = pb.UploadVideoByCosReq
+	UploadVideoByCosResp   = pb.UploadVideoByCosResp
+	UploadVideoByLocalReq  = pb.UploadVideoByLocalReq
+	UploadVideoByLocalResp = pb.UploadVideoByLocalResp
 
 	File interface {
 		UploadVideoByCos(ctx context.Context, in *UploadVideoByCosReq, opts ...grpc.CallOption) (*UploadVideoByCosResp, error)
+		// 流式传输文件
 		UploadVideoStreamByCos(ctx context.Context, opts ...grpc.CallOption) (pb.File_UploadVideoStreamByCosClient, error)
+		// 上传视频到本地
+		UploadVideoByLocal(ctx context.Context, opts ...grpc.CallOption) (pb.File_UploadVideoByLocalClient, error)
 	}
 
 	defaultFile struct {
@@ -37,7 +42,14 @@ func (m *defaultFile) UploadVideoByCos(ctx context.Context, in *UploadVideoByCos
 	return client.UploadVideoByCos(ctx, in, opts...)
 }
 
+// 流式传输文件
 func (m *defaultFile) UploadVideoStreamByCos(ctx context.Context, opts ...grpc.CallOption) (pb.File_UploadVideoStreamByCosClient, error) {
 	client := pb.NewFileClient(m.cli.Conn())
 	return client.UploadVideoStreamByCos(ctx, opts...)
+}
+
+// 上传视频到本地
+func (m *defaultFile) UploadVideoByLocal(ctx context.Context, opts ...grpc.CallOption) (pb.File_UploadVideoByLocalClient, error) {
+	client := pb.NewFileClient(m.cli.Conn())
+	return client.UploadVideoByLocal(ctx, opts...)
 }
