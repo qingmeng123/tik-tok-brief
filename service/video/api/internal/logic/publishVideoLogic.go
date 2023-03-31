@@ -39,7 +39,6 @@ func (l *PublishVideoLogic) PublishVideo(req *types.PublishReq) (resp *types.Pub
 		logx.Error("open file err:", err)
 		return nil, errorx.NewParamErr(errorx.ERRFILEPARAM)
 	}
-
 	bytes, err := io.ReadAll(file)
 	if err != nil {
 		logx.Error("io_read err:", err)
@@ -49,7 +48,7 @@ func (l *PublishVideoLogic) PublishVideo(req *types.PublishReq) (resp *types.Pub
 	fileName := req.Title
 
 	//调用上传文件服务
-	stream, err := l.svcCtx.FileRPC.UploadVideoByLocal(l.ctx)
+	stream, err := l.svcCtx.FileRPC.UploadVideoStreamByCos(l.ctx)
 	if err != nil {
 		logx.Error("fileRPC_UploadVideoByCos err:", err)
 		return nil, err
@@ -59,7 +58,7 @@ func (l *PublishVideoLogic) PublishVideo(req *types.PublishReq) (resp *types.Pub
 	byteSlice := chunkByteSlice(bytes, 10)
 
 	//发送文件名
-	err = stream.Send(&filepb.UploadVideoByLocalReq{VideoName: fileName})
+	err = stream.Send(&filepb.UploadVideoByCosReq{VideoName: fileName})
 	if err != nil {
 		logx.Error("steam send filename err:", err)
 		return nil, err
@@ -67,7 +66,7 @@ func (l *PublishVideoLogic) PublishVideo(req *types.PublishReq) (resp *types.Pub
 
 	//发送视频文件字节数据
 	for _, bs := range byteSlice {
-		err = stream.Send(&filepb.UploadVideoByLocalReq{Data: bs})
+		err = stream.Send(&filepb.UploadVideoByCosReq{Data: bs})
 		if err != nil {
 			logx.Error("steam send err:", err)
 			return nil, err

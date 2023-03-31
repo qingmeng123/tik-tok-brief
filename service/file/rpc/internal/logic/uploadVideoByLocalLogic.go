@@ -7,6 +7,7 @@ import (
 	"github.com/disintegration/imaging"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"tik-tok-brief/common/errorx"
 
@@ -49,6 +50,9 @@ func (l *UploadVideoByLocalLogic) UploadVideoByLocal(stream pb.File_UploadVideoB
 		if err == io.EOF {
 			//完成读取
 			videoPath := l.svcCtx.Config.LocalVideoPath + videoName
+			if err = os.MkdirAll(filepath.Dir(videoPath), os.ModePerm); err != nil {
+				logx.Error("write file err:", err)
+			}
 			err = os.WriteFile(videoPath, buffer.Bytes(), 0666)
 			if err != nil {
 				logx.Error("write file err:", err)
@@ -57,6 +61,7 @@ func (l *UploadVideoByLocalLogic) UploadVideoByLocal(stream pb.File_UploadVideoB
 			coverPath := l.svcCtx.Config.LocalCoverPath + videoName
 			coverPath, err = GetSnapshot(videoPath, coverPath, 1)
 			if err != nil {
+				logx.Error("getSnapshot err:", err)
 				return errorx.NewStatusParamErr(errorx.ERRFILEUPLOAD)
 			}
 			return stream.SendAndClose(&pb.UploadVideoByLocalResp{
