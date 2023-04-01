@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `video`;
 CREATE TABLE `video`
 (
-    `id`             bigint          NOT NULL UNIQUE primary key AUTO_INCREMENT,
+    `id`             bigint          NOT NULL UNIQUE AUTO_INCREMENT,
     `video_id`        bigint          NOT NULL UNIQUE COMMENT '视频id',
     `user_id`        bigint          NOT NULL  COMMENT '发布作者id',
     `title`          char(32)  NOT NULL COMMENT '视频标题',

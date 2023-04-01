@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package follow;
+
+option go_package = "./pb";   // 指定生成的Go代码在你项目中的导入路径（即其package)
+
+// 关注实体
+message Follow {
+  int64 id = 1;
+  int64 userId = 2;
+  int64 toUserId = 3;
+  bool isFriend = 4;
+}
+// 获取关注信息请求体
+message GetFollowInfoReq{
+  int64 userId = 1;
+  int64 toUserId = 2;
+}
+// 获取关注信息返回体
+message GetFollowInfoResp{
+  bool isFollow = 1;
+  Follow follow = 2;
+}
+// 获取关注列表请求体
+message GetFollowListByUserIdReq{
+  int64 userId = 1;
+}
+// 获取关注列表返回体
+message GetFollowListByUserIdResp{
+  repeated Follow follows = 1;
+}
+// 获取粉丝列表请求体
+message GetFansListByUserIdReq{
+  int64 userId = 1;
+}
+// 获取粉丝列表返回体
+message GetFansListByUserIdResp{
+  repeated Follow follows = 1;
+}
+// 关注请求体
+message FollowReq{
+  int64 userId = 1;
+  int64 toUserId = 2;
+}
+// 关注返回体
+message FollowResp{
+}
+// 取消关注请求体
+message UnFollowReq{
+  int64 userId = 1;
+  int64 toUserId = 2;
+}
+// 取消关注返回体
+message UnFollowResp{
+}
+// 好友列表请求体
+message GetFriendsListReq{
+  int64 userId = 1;
+}
+// 好友列表返回体
+message GetFriendsListResp{
+  repeated Follow follows = 1;
+}
+
+service follow{
+  //  获取关注信息
+  rpc GetFollowInfo(GetFollowInfoReq) returns(GetFollowInfoResp);
+  // 获取关注列表
+  rpc GetFollowListByUserId(GetFollowListByUserIdReq) returns(GetFollowListByUserIdResp);
+  // 获取粉丝列表
+  rpc GetFansListByUserId(GetFansListByUserIdReq) returns(GetFansListByUserIdResp);
+  // 关注
+  rpc Follow(FollowReq) returns(FollowResp);
+  // 取消关注
+  rpc UnFollow(UnFollowReq) returns(UnFollowResp);
+  // 获取好友列表
+  rpc GetFriendsList(GetFriendsListReq) returns(GetFriendsListResp);
+}

@@ -51,6 +51,6 @@ type FeedReq struct {
 
 type FeedResp struct {
 	Status
-	VideoList []Video `json:"videoList,omitempty"`
+	VideoList []Video `json:"video_list,omitempty"`
 	NextTime  int64   `json:"nextTime,omitempty"`
 }

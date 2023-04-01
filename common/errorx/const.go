@@ -26,8 +26,9 @@ const (
 	ERRTOKEN        = "用户token错误"
 	ERRFILEPARAM    = "文件格式不对"
 	ERRFILEUPLOAD   = "上传文件出错啦"
-
-	ERRTIMEPARAM = "时间转化错误"
+	ERRFOLLOWUSER   = "已关注过该用户"
+	ERRUNFOLLOWUSER = "未关注该用户"
+	ERRTIMEPARAM    = "时间转化错误"
 
 	ERRDB       = "数据库繁忙,请稍后再试"
 	ERRINTERNAL = "服务器开小差了，请稍后再试"

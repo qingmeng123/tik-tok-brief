@@ -1,0 +1,20 @@
+Name: follow.rpc
+Mode: dev
+ListenOn: 0.0.0.0:9003
+
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: follow.rpc
+
+Mysql:
+  DataSource: root:@XUEHUI.@tcp(127.0.0.1:3306)/tik_tok_follow?charset=utf8mb4&parseTime=true
+
+CacheRedis:
+  - Host: 127.0.0.1:6379
+
+Log:
+  ServiceName: "follow-rpc"
+  Mode: "file"
+  Level: "debug"
+

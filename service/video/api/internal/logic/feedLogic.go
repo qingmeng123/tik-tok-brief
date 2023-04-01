@@ -36,9 +36,7 @@ func (l *FeedLogic) Feed(req *types.FeedReq) (resp *types.FeedResp, err error) {
 	} else {
 		//tUserId:=vUserId.(int64)
 	}
-	if req.LastTime == 0 {
-		req.LastTime = time.Now().Unix()
-	}
+	req.LastTime = time.Now().Unix()
 	//获取视频流
 	feedResp, err := l.svcCtx.VideoRPC.Feed(l.ctx, &pb.FeedReq{
 		LastTime: &req.LastTime,
@@ -69,6 +67,8 @@ func (l *FeedLogic) Feed(req *types.FeedReq) (resp *types.FeedResp, err error) {
 			logx.Error("copier_copy err:", err)
 			return nil, errorx.NewInternalErr()
 		}
+		resp.VideoList[i].PlayUrl = "https://www.w3schools.com/html/movie.mp4"
+		resp.VideoList[i].CoverUrl = "https://cdn.pixabay.com/photo/2016/03/27/18/10/bear-1283347_1280.jpg"
 	}
 
 	resp.StatusCode = errorx.OK
