@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package chat; //protobuf包名（用于给protobuf包调用）
+
+option go_package = "./pb";   // 指定生成的Go代码在你项目中的导入路径（即其package)
+
+// 消息实例
+message Message{
+  int64 id = 1;
+  string content = 2;
+  int64 ToUserId = 3;
+  int64 FromUserId = 4;
+  string createTime = 5;
+}
+
+// 发送消息请求体
+message SendMessageReq{
+  int64 fromUserId = 1;
+  int64 toUserId = 2;
+  string content = 3;
+}
+// 发送消息返回体
+message SendMessageResp{
+}
+// 获取历史消息请求体
+message GetHistoryMessageReq{
+  int64 fromUserId = 1;
+  int64 toUserId = 2;
+}
+// 获取历史消息返回体
+message GetHistoryMessageResp{
+  repeated Message messageList = 1;
+}
+
+service chat{
+  // 发送消息
+  rpc SendMessage(SendMessageReq) returns(SendMessageResp);
+  // 获取历史消息
+  rpc GetHistoryMessage(GetHistoryMessageReq) returns(GetHistoryMessageResp);
+}
+

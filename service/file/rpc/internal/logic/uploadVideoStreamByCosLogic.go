@@ -69,7 +69,7 @@ func (l *UploadVideoStreamByCosLogic) UploadVideoStreamByCos(stream pb.File_Uplo
 			}
 
 			return stream.SendAndClose(&pb.UploadVideoByCosResp{
-				PlayUrl:  l.svcCtx.Config.Cos.BucketURL + l.svcCtx.Config.Cos.VideoPrefix + videoName + l.svcCtx.Config.Cos.VideoTranscodingSuffix,
+				PlayUrl:  l.svcCtx.Config.Cos.BucketURL + playPath,
 				CoverUrl: l.svcCtx.Config.Cos.BucketURL + coverPath,
 			})
 		}
