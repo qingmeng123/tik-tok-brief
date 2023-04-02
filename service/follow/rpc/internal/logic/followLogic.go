@@ -28,7 +28,7 @@ func NewFollowLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FollowLogi
 
 // 关注
 func (l *FollowLogic) Follow(in *pb.FollowReq) (*pb.FollowResp, error) {
-	//检查是否关注对方
+	//检查是否已关注对方
 	_, err := l.svcCtx.FollowModel.FindIsFriendByUsersId(l.ctx, in.UserId, in.ToUserId)
 	if err != nil && err != sqlx.ErrNotFound {
 		logx.Error("FollowModel.FindIsFriendByUsersId err:", err)

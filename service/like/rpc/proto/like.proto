@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package like; //protobuf包名（用于给protobuf包调用）
+
+option go_package = "./pb";   // 指定生成的Go代码在你项目中的导入路径（即其package)
+
+message Like{
+  int64 id=1;
+  int64 userId=2;
+  int64 videoId=3;
+}
+
+message LikeReq{
+  int64 userId=1;
+  int64 videoId=2;
+  int32 ActionType=3;//1-点赞，2-取消点赞
+}
+
+message LikeResp{
+}
+
+message LikeListReq{
+  int64 userId=1;
+}
+
+message LikeListResp{
+  repeated Like likes=1;
+}
+
+service follow{
+  //赞操作
+  rpc Like(LikeReq)returns(LikeListResp);
+  //获取点赞视频列表
+  rpc LikeList(LikeListReq)returns(LikeListResp);
+}

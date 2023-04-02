@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package comment; //protobuf包名（用于给protobuf包调用）
+
+option go_package = "./pb";   // 指定生成的Go代码在你项目中的导入路径（即其package)
+
+message Comment{
+  int64 id=1;
+  int64 userId = 2;
+  int64 videoId = 3;
+  string content = 4;
+  string createTime = 5;
+}
+
+message CommentReq{
+  int64 userId=1;
+  int64 videoId=2;
+  int32 actionType=3;
+  optional string content=4;
+  optional int64 commentId=5;
+}
+
+message CommentResp{
+  optional Comment comment=1;
+}
+
+message CommentListReq{
+  int64 videoId=1;
+}
+
+message CommentListResp{
+  repeated Comment comments=1;
+}
+
+service comment{
+  //评论操作
+  rpc Comment(CommentReq)returns(CommentResp);
+  //某视频的评论列表
+  rpc CommentList(CommentListReq)returns(CommentListResp);
+}

@@ -28,6 +28,8 @@ const (
 	ERRFILEUPLOAD   = "上传文件出错啦"
 	ERRFOLLOWUSER   = "已关注过该用户"
 	ERRUNFOLLOWUSER = "未关注该用户"
+	ERRLIKE         = "赞操作错误"
+	ERRCOMMENT      = "评论操作错误"
 	ERRTIMEPARAM    = "时间转化错误"
 
 	ERRDB       = "数据库繁忙,请稍后再试"
