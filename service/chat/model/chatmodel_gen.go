@@ -22,15 +22,13 @@ var (
 	chatRowsExpectAutoSet   = strings.Join(stringx.Remove(chatFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	chatRowsWithPlaceHolder = strings.Join(stringx.Remove(chatFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheChatIdPrefix = "cache:chat:id:"
-	cacheChatIdPrefix = "cache:chat:id:"
+	cacheTikTokChatChatIdPrefix = "cache:tikTokChat:chat:id:"
 )
 
 type (
 	chatModel interface {
 		Insert(ctx context.Context, data *Chat) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*Chat, error)
-		FindOneById(ctx context.Context, id int64) (*Chat, error)
 		Update(ctx context.Context, data *Chat) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -58,24 +56,18 @@ func newChatModel(conn sqlx.SqlConn, c cache.CacheConf) *defaultChatModel {
 }
 
 func (m *defaultChatModel) Delete(ctx context.Context, id int64) error {
-	data, err := m.FindOne(ctx, id)
-	if err != nil {
-		return err
-	}
-
-	chatIdKey := fmt.Sprintf("%s%v", cacheChatIdPrefix, data.Id)
-	chatIdKey := fmt.Sprintf("%s%v", cacheChatIdPrefix, id)
-	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+	tikTokChatChatIdKey := fmt.Sprintf("%s%v", cacheTikTokChatChatIdPrefix, id)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, chatIdKey)
+	}, tikTokChatChatIdKey)
 	return err
 }
 
 func (m *defaultChatModel) FindOne(ctx context.Context, id int64) (*Chat, error) {
-	chatIdKey := fmt.Sprintf("%s%v", cacheChatIdPrefix, id)
+	tikTokChatChatIdKey := fmt.Sprintf("%s%v", cacheTikTokChatChatIdPrefix, id)
 	var resp Chat
-	err := m.QueryRowCtx(ctx, &resp, chatIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+	err := m.QueryRowCtx(ctx, &resp, tikTokChatChatIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", chatRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
@@ -89,51 +81,26 @@ func (m *defaultChatModel) FindOne(ctx context.Context, id int64) (*Chat, error)
 	}
 }
 
-func (m *defaultChatModel) FindOneById(ctx context.Context, id int64) (*Chat, error) {
-	chatIdKey := fmt.Sprintf("%s%v", cacheChatIdPrefix, id)
-	var resp Chat
-	err := m.QueryRowIndexCtx(ctx, &resp, chatIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", chatRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, id); err != nil {
-			return nil, err
-		}
-		return resp.Id, nil
-	}, m.queryPrimary)
-	switch err {
-	case nil:
-		return &resp, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
-}
-
 func (m *defaultChatModel) Insert(ctx context.Context, data *Chat) (sql.Result, error) {
-	chatIdKey := fmt.Sprintf("%s%v", cacheChatIdPrefix, data.Id)
+	tikTokChatChatIdKey := fmt.Sprintf("%s%v", cacheTikTokChatChatIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, chatRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.FromUserId, data.ToUserId, data.Content)
-	}, chatIdKey)
+	}, tikTokChatChatIdKey)
 	return ret, err
 }
 
-func (m *defaultChatModel) Update(ctx context.Context, newData *Chat) error {
-	data, err := m.FindOne(ctx, newData.Id)
-	if err != nil {
-		return err
-	}
-
-	chatIdKey := fmt.Sprintf("%s%v", cacheChatIdPrefix, data.Id)
-	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+func (m *defaultChatModel) Update(ctx context.Context, data *Chat) error {
+	tikTokChatChatIdKey := fmt.Sprintf("%s%v", cacheTikTokChatChatIdPrefix, data.Id)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, chatRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.FromUserId, newData.ToUserId, newData.Content, newData.Id)
-	}, chatIdKey)
+		return conn.ExecCtx(ctx, query, data.FromUserId, data.ToUserId, data.Content, data.Id)
+	}, tikTokChatChatIdKey)
 	return err
 }
 
 func (m *defaultChatModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheChatIdPrefix, primary)
+	return fmt.Sprintf("%s%v", cacheTikTokChatChatIdPrefix, primary)
 }
 
 func (m *defaultChatModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {

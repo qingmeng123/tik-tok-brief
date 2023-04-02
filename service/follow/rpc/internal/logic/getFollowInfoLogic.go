@@ -32,8 +32,13 @@ func (l *GetFollowInfoLogic) GetFollowInfo(in *pb.GetFollowInfoReq) (*pb.GetFoll
 		logx.Error("FollowModel.FindIsFriendByUsersId err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
+
+	if err == sqlx.ErrNotFound {
+		return &pb.GetFollowInfoResp{}, nil
+	}
+
 	flag := false
-	if follow.IsFriend == 1 {
+	if follow.IsFriend {
 		flag = true
 	}
 	return &pb.GetFollowInfoResp{Follow: &pb.Follow{

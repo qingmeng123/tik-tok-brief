@@ -2,7 +2,8 @@ package logic
 
 import (
 	"context"
-
+	"tik-tok-brief/common/errorx"
+	"tik-tok-brief/service/chat/model"
 	"tik-tok-brief/service/chat/rpc/internal/svc"
 	"tik-tok-brief/service/chat/rpc/proto/pb"
 
@@ -25,7 +26,15 @@ func NewSendMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendM
 
 // 发送消息
 func (l *SendMessageLogic) SendMessage(in *pb.SendMessageReq) (*pb.SendMessageResp, error) {
-	// todo: add your logic here and delete this line
+	_, err := l.svcCtx.ChatModel.Insert(l.ctx, &model.Chat{
+		FromUserId: in.FromUserId,
+		ToUserId:   in.ToUserId,
+		Content:    in.Content,
+	})
+	if err != nil {
+		logx.Error("ChatModel.Insert err:", err)
+		return nil, errorx.NewStatusDBErr()
+	}
 
 	return &pb.SendMessageResp{}, nil
 }

@@ -34,7 +34,7 @@ func (l *GetFansListByUserIdLogic) GetFansListByUserId(in *pb.GetFansListByUserI
 		return nil, errorx.NewStatusDBErr()
 	}
 	if err == sqlx.ErrNotFound {
-		return nil, nil
+		return &pb.GetFansListByUserIdResp{}, nil
 	}
 	res := make([]*pb.Follow, len(followers))
 	err = copier.Copy(&res, followers)

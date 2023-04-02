@@ -1,6 +1,19 @@
 Name: chat.rpc
-ListenOn: 0.0.0.0:8080
+Mode: dev
+ListenOn: 0.0.0.0:9004
+
 Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: chat.rpc
+
+Mysql:
+  DataSource: root:@XUEHUI.@tcp(127.0.0.1:3306)/tik_tok_chat?charset=utf8mb4&parseTime=true
+
+CacheRedis:
+  - Host: 127.0.0.1:6379
+
+Log:
+  ServiceName: "chat-rpc"
+  Mode: "file"
+  Level: "debug"

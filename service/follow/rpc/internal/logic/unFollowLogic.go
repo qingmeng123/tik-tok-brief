@@ -4,8 +4,6 @@ import (
 	"context"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"tik-tok-brief/common/errorx"
-	"tik-tok-brief/service/follow/model"
-
 	"tik-tok-brief/service/follow/rpc/internal/svc"
 	"tik-tok-brief/service/follow/rpc/proto/pb"
 
@@ -41,7 +39,7 @@ func (l *UnFollowLogic) UnFollow(in *pb.UnFollowReq) (*pb.UnFollowResp, error) {
 	}
 
 	//查看对方是否关注自己
-	_, err = l.svcCtx.FollowModel.FindIsFriendByUsersId(l.ctx, in.ToUserId, in.UserId)
+	follower, err := l.svcCtx.FollowModel.FindIsFriendByUsersId(l.ctx, in.ToUserId, in.UserId)
 	if err != nil && err != sqlx.ErrNotFound {
 		logx.Error("FollowModel.FindIsFriendByUsersId err:", err)
 		return nil, errorx.NewStatusDBErr()
@@ -56,19 +54,16 @@ func (l *UnFollowLogic) UnFollow(in *pb.UnFollowReq) (*pb.UnFollowResp, error) {
 
 	//对方未关注自己，直接返回
 	if err != nil {
-		return nil, nil
+		return &pb.UnFollowResp{}, nil
 	}
 
 	//对方已关注自己，取消朋友关系
-	err = l.svcCtx.FollowModel.Update(l.ctx, &model.Follow{
-		UserId:   in.ToUserId,
-		ToUserId: in.UserId,
-		IsFriend: 0,
-	})
+	follower.IsFriend = false
+	err = l.svcCtx.FollowModel.Update(l.ctx, follower)
 	if err != nil {
 		logx.Error("FollowModel.Update err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
 
-	return nil, nil
+	return &pb.UnFollowResp{}, nil
 }

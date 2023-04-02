@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"tik-tok-brief/common/errorx"
 	"tik-tok-brief/service/follow/model"
@@ -40,7 +41,7 @@ func (l *FollowLogic) Follow(in *pb.FollowReq) (*pb.FollowResp, error) {
 	}
 
 	//查看对方是否关注自己
-	_, err = l.svcCtx.FollowModel.FindIsFriendByUsersId(l.ctx, in.ToUserId, in.UserId)
+	follower, err := l.svcCtx.FollowModel.FindIsFriendByUsersId(l.ctx, in.ToUserId, in.UserId)
 	if err != nil && err != sqlx.ErrNotFound {
 		logx.Error("FollowModel.FindIsFriendByUsersId err:", err)
 		return nil, errorx.NewStatusDBErr()
@@ -51,33 +52,29 @@ func (l *FollowLogic) Follow(in *pb.FollowReq) (*pb.FollowResp, error) {
 		_, err = l.svcCtx.FollowModel.Insert(l.ctx, &model.Follow{
 			UserId:   in.UserId,
 			ToUserId: in.ToUserId,
-			IsFriend: 0,
+			IsFriend: false,
 		})
-		return nil, nil
+		return &pb.FollowResp{}, nil
 	}
 
 	//对方已关注自己，成为朋友
 	_, err = l.svcCtx.FollowModel.Insert(l.ctx, &model.Follow{
 		UserId:   in.UserId,
 		ToUserId: in.ToUserId,
-		IsFriend: 1,
+		IsFriend: true,
 	})
 	if err != nil {
 		logx.Error("FollowModel.Insert err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
 
-	err = l.svcCtx.FollowModel.Update(l.ctx, &model.Follow{
-
-		UserId:   in.ToUserId,
-		ToUserId: in.UserId,
-		IsFriend: 1,
-	})
-
+	//对方也修改为朋友
+	follower.IsFriend = true
+	err = l.svcCtx.FollowModel.Update(l.ctx, follower)
+	fmt.Println(follower)
 	if err != nil {
 		logx.Error("FollowModel.Update err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
-
 	return &pb.FollowResp{}, nil
 }

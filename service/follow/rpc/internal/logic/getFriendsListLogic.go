@@ -34,7 +34,7 @@ func (l *GetFriendsListLogic) GetFriendsList(in *pb.GetFriendsListReq) (*pb.GetF
 		return nil, errorx.NewStatusDBErr()
 	}
 	if err == sqlx.ErrNotFound {
-		return nil, nil
+		return &pb.GetFriendsListResp{}, nil
 	}
 	res := make([]*pb.Follow, len(follows))
 	err = copier.Copy(&res, follows)

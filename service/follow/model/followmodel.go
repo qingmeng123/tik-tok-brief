@@ -48,7 +48,7 @@ func (m *defaultFollowModel) FindFollowersByToUserId(ctx context.Context, toUser
 func (m *defaultFollowModel) FindFriendsByUserId(ctx context.Context, userId int64) ([]*Follow, error) {
 	follows := make([]*Follow, 0)
 	query := fmt.Sprintf("select * from %s where user_id =? and is_friend= ?", m.table)
-	err := m.QueryRowsNoCacheCtx(ctx, &follows, query, userId, 1)
+	err := m.QueryRowsNoCacheCtx(ctx, &follows, query, userId, true)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (m *defaultFollowModel) FindFriendsByUserId(ctx context.Context, userId int
 func (m *defaultFollowModel) FindIsFriendByUsersId(ctx context.Context, userId, toUserId int64) (*Follow, error) {
 	query := fmt.Sprintf("select * from %s where user_id=? and to_user_id=? limit 1", m.table)
 	follow := new(Follow)
-	err := m.QueryRowNoCacheCtx(ctx, &follow, query, userId, toUserId)
+	err := m.QueryRowNoCacheCtx(ctx, follow, query, userId, toUserId)
 	if err != nil {
 		return nil, err
 	}

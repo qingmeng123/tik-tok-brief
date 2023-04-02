@@ -34,7 +34,7 @@ func (l *GetFollowListByUserIdLogic) GetFollowListByUserId(in *pb.GetFollowListB
 		return nil, errorx.NewStatusDBErr()
 	}
 	if err == sqlx.ErrNotFound {
-		return nil, nil
+		return &pb.GetFollowListByUserIdResp{}, nil
 	}
 	res := make([]*pb.Follow, len(follows))
 	err = copier.Copy(&res, follows)
