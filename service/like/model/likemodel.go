@@ -26,7 +26,7 @@ type (
 func (m *defaultLikeModel) FindLikeByUserIdVideoId(ctx context.Context, userId, videoId int64) (*Like, error) {
 	like := new(Like)
 	query := fmt.Sprintf("select * from %s where user_id =? and video_id=?", m.table)
-	err := m.QueryRowNoCacheCtx(ctx, &like, query, userId, videoId)
+	err := m.QueryRowNoCacheCtx(ctx, like, query, userId, videoId)
 	if err != nil {
 		return nil, err
 	}

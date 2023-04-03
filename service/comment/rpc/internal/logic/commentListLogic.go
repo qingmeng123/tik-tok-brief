@@ -36,6 +36,9 @@ func (l *CommentListLogic) CommentList(in *pb.CommentListReq) (*pb.CommentListRe
 	if err != sqlx.ErrNotFound {
 		res := make([]*pb.Comment, len(likes))
 		copier.Copy(&res, likes)
+		for i := 0; i < len(res); i++ {
+			res[i].CreateTime=likes[i].CreateTime.Format("2006-01-02 15:04:05")
+		}
 		return &pb.CommentListResp{Comments: res}, nil
 	}
 

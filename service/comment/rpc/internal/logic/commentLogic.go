@@ -2,11 +2,11 @@ package logic
 
 import (
 	"context"
-	"github.com/jinzhu/copier"
 	"tik-tok-brief/common/errorx"
 	"tik-tok-brief/service/comment/model"
 	"tik-tok-brief/service/comment/rpc/internal/svc"
 	"tik-tok-brief/service/comment/rpc/proto/pb"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -38,9 +38,14 @@ func (l *CommentLogic) Comment(in *pb.CommentReq) (*pb.CommentResp, error) {
 			logx.Error("CommentModel.Insert err:", err)
 			return nil, errorx.NewStatusDBErr()
 		}
-		res := new(pb.Comment)
-		copier.Copy(res, &result)
-		return &pb.CommentResp{Comment: res}, nil
+		id,_:=result.LastInsertId()
+		return &pb.CommentResp{Comment: &pb.Comment{
+			Id:        id ,
+			UserId:     in.UserId,
+			VideoId:    in.VideoId,
+			Content:    *in.Content,
+			CreateTime: time.Now().Format("2006-01-02 15:04:05"),
+		}}, nil
 	}
 
 	//删除评论

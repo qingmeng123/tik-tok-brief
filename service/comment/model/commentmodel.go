@@ -24,7 +24,7 @@ type (
 
 func (m *defaultCommentModel) FindCommentListByVideoId(ctx context.Context, videoId int64) ([]*Comment, error) {
 	comments := make([]*Comment, 0)
-	query := fmt.Sprintf("select * from %s where video_id =?", m.table)
+	query := fmt.Sprintf("select * from %s where video_id =? order by create_time desc", m.table)
 	err := m.QueryRowsNoCacheCtx(ctx, &comments, query, videoId)
 	if err != nil {
 		return nil, err

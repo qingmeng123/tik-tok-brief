@@ -65,6 +65,10 @@ type (
 	}
 )
 
+
+
+
+
 @server(
 	prefix: douyin/user
 )

@@ -35,8 +35,8 @@ func (l *LikeLogic) Like(in *pb.LikeReq) (*pb.LikeListResp, error) {
 	//点赞
 	if err == sqlx.ErrNotFound && in.ActionType == 1 {
 		_, err = l.svcCtx.LikeModel.Insert(l.ctx, &model.Like{
-			UserId:  0,
-			VideoId: 0,
+			UserId:  in.UserId,
+			VideoId: in.VideoId,
 		})
 		if err != nil {
 			logx.Error(".LikeModel.Insert err:", err)
@@ -50,7 +50,7 @@ func (l *LikeLogic) Like(in *pb.LikeReq) (*pb.LikeListResp, error) {
 		err = l.svcCtx.LikeModel.Delete(l.ctx, like.Id)
 		if err != nil {
 			logx.Error("LikeModel.Delete err:", err)
-			return nil, errorx.NewStatusDBErr()
+			return &pb.LikeListResp{}, nil
 		}
 	}
 
