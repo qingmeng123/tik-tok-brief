@@ -65,9 +65,47 @@ type (
 	}
 )
 
-
-
-
+//```````````````````````社交````````````````````````
+type (
+	FollowReq {
+		Token      string `form:"token" validate:"required"`
+		ToUserId   int64  `form:"to_user_id" validate:"required,gte=0"`
+		ActionType int64  `form:"action_type" validate:"required,gte=1,lte=2"`
+	}
+	FollowResp {
+		StatusResponse
+	}
+)
+type (
+	FollowListReq {
+		Token  string `form:"token" validate:"required"`
+		UserId int64  `form:"user_id" validate:"required,gte=0"`
+	}
+	FollowListResp {
+		StatusResponse
+		UserList []User `json:"user_list,omitempty"`
+	}
+)
+type (
+	FollowerListReq {
+		Token  string `form:"token" validate:"required"`
+		UserId int64  `form:"user_id" validate:"required,gte=0"`
+	}
+	FollowerListResp {
+		StatusResponse
+		UserList []User `json:"user_list,omitempty"`
+	}
+)
+type (
+	FriendsListReq {
+		Token  string `form:"token" validate:"required"`
+		UserId int64  `form:"user_id" validate:"required,gte=0"`
+	}
+	FriendsListResp {
+		StatusResponse
+		UserList []User `json:"user_list,omitempty"`
+	}
+)
 
 @server(
 	prefix: douyin/user
@@ -90,4 +128,26 @@ service user-api {
 	@doc "获取用户信息"
 	@handler getUserInfo
 	get / (UserInfoReq) returns (UserInfoResp)
+}
+
+@server(
+	prefix :douyin/relation
+	middleware :JwtAuthMiddleware
+)
+service user-api{
+	@doc "登录用户对其他用户进行关注或取消关注"
+	@handler follow
+	post /action (FollowReq) returns(FollowResp)
+	
+	@doc "登录用户关注的所有用户列表"
+	@handler followList
+	get /follow/list (FollowListReq)returns(FollowListResp)
+	
+	@doc "所有关注登录用户的粉丝列表"
+	@handler followerList
+	get /follower/list (FollowerListReq)returns(FollowerListResp)
+	
+	@doc "朋友列表"
+	@handler friendsList
+	get /friend/list (FriendsListReq)returns(FriendsListResp)
 }

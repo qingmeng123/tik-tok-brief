@@ -51,3 +51,43 @@ type UserInfoResp struct {
 	StatusResponse
 	User User `json:"user,omitempty"`
 }
+
+type FollowReq struct {
+	Token      string `form:"token" validate:"required"`
+	ToUserId   int64  `form:"to_user_id" validate:"required,gte=0"`
+	ActionType int64  `form:"action_type" validate:"required,gte=1,lte=2"`
+}
+
+type FollowResp struct {
+	StatusResponse
+}
+
+type FollowListReq struct {
+	Token  string `form:"token" validate:"required"`
+	UserId int64  `form:"user_id" validate:"required,gte=0"`
+}
+
+type FollowListResp struct {
+	StatusResponse
+	UserList []User `json:"user_list,omitempty"`
+}
+
+type FollowerListReq struct {
+	Token  string `form:"token" validate:"required"`
+	UserId int64  `form:"user_id" validate:"required,gte=0"`
+}
+
+type FollowerListResp struct {
+	StatusResponse
+	UserList []User `json:"user_list,omitempty"`
+}
+
+type FriendsListReq struct {
+	Token  string `form:"token" validate:"required"`
+	UserId int64  `form:"user_id" validate:"required,gte=0"`
+}
+
+type FriendsListResp struct {
+	StatusResponse
+	UserList []User `json:"user_list,omitempty"`
+}

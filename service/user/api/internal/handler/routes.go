@@ -39,4 +39,33 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		),
 		rest.WithPrefix("/douyin/user"),
 	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.JwtAuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/action",
+					Handler: followHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/follow/list",
+					Handler: followListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/follower/list",
+					Handler: followerListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/friend/list",
+					Handler: friendsListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/douyin/relation"),
+	)
 }

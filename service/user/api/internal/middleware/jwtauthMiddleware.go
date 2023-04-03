@@ -1,19 +1,19 @@
 package middleware
 
-import "net/http"
+import (
+	"net/http"
+	"tik-tok-brief/common/middleware"
+)
 
 type JwtAuthMiddleware struct {
+	accessSecret string
 }
 
-func NewJwtAuthMiddleware() *JwtAuthMiddleware {
-	return &JwtAuthMiddleware{}
+func NewJwtAuthMiddleware(accessToken string) *JwtAuthMiddleware {
+	return &JwtAuthMiddleware{accessSecret: accessToken}
 }
 
 func (m *JwtAuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO generate middleware implement function, delete after code implementation
-
-		// Passthrough to next handler if need
-		next(w, r)
-	}
+	jwtAuth := middleware.NewJwtAuth(m.accessSecret)
+	return jwtAuth.Handle(next)
 }
