@@ -15,6 +15,8 @@ import (
 type (
 	GetHistoryMessageReq  = pb.GetHistoryMessageReq
 	GetHistoryMessageResp = pb.GetHistoryMessageResp
+	GetLatestMessageReq   = pb.GetLatestMessageReq
+	GetLatestMessageResp  = pb.GetLatestMessageResp
 	Message               = pb.Message
 	SendMessageReq        = pb.SendMessageReq
 	SendMessageResp       = pb.SendMessageResp
@@ -24,6 +26,8 @@ type (
 		SendMessage(ctx context.Context, in *SendMessageReq, opts ...grpc.CallOption) (*SendMessageResp, error)
 		// 获取历史消息
 		GetHistoryMessage(ctx context.Context, in *GetHistoryMessageReq, opts ...grpc.CallOption) (*GetHistoryMessageResp, error)
+		// 获取双方最新的一条消息
+		GetLatestMessage(ctx context.Context, in *GetLatestMessageReq, opts ...grpc.CallOption) (*GetLatestMessageResp, error)
 	}
 
 	defaultChat struct {
@@ -47,4 +51,10 @@ func (m *defaultChat) SendMessage(ctx context.Context, in *SendMessageReq, opts 
 func (m *defaultChat) GetHistoryMessage(ctx context.Context, in *GetHistoryMessageReq, opts ...grpc.CallOption) (*GetHistoryMessageResp, error) {
 	client := pb.NewChatClient(m.cli.Conn())
 	return client.GetHistoryMessage(ctx, in, opts...)
+}
+
+// 获取双方最新的一条消息
+func (m *defaultChat) GetLatestMessage(ctx context.Context, in *GetLatestMessageReq, opts ...grpc.CallOption) (*GetLatestMessageResp, error) {
+	client := pb.NewChatClient(m.cli.Conn())
+	return client.GetLatestMessage(ctx, in, opts...)
 }

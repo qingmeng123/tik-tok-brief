@@ -65,6 +65,17 @@ message GenerateTokenResp{
   string token=1;
 }
 
+// 批量获取用户请求体
+message GetUserListByIdsReq {
+  optional int64 userId = 1;
+  repeated int64 ids = 2;
+}
+// 批量获取用户返回体
+message GetUserListByIdsResp {
+  repeated User users = 1;
+}
+
+
 service user{
   //用户注册
   rpc Register(RegisterReq)returns(RegisterResp);
@@ -77,4 +88,7 @@ service user{
 
   //获取token
   rpc GenerateToken(GenerateTokenReq)returns(GenerateTokenResp);
+
+  // 批量获取用户信息
+  rpc GetUserListByIds(GetUserListByIdsReq) returns (GetUserListByIdsResp);
 }

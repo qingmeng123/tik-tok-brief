@@ -26,6 +26,8 @@ type ChatClient interface {
 	SendMessage(ctx context.Context, in *SendMessageReq, opts ...grpc.CallOption) (*SendMessageResp, error)
 	// 获取历史消息
 	GetHistoryMessage(ctx context.Context, in *GetHistoryMessageReq, opts ...grpc.CallOption) (*GetHistoryMessageResp, error)
+	//获取双方最新的一条消息
+	GetLatestMessage(ctx context.Context, in *GetLatestMessageReq, opts ...grpc.CallOption) (*GetLatestMessageResp, error)
 }
 
 type chatClient struct {
@@ -54,6 +56,15 @@ func (c *chatClient) GetHistoryMessage(ctx context.Context, in *GetHistoryMessag
 	return out, nil
 }
 
+func (c *chatClient) GetLatestMessage(ctx context.Context, in *GetLatestMessageReq, opts ...grpc.CallOption) (*GetLatestMessageResp, error) {
+	out := new(GetLatestMessageResp)
+	err := c.cc.Invoke(ctx, "/chat.chat/GetLatestMessage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ChatServer is the server API for Chat service.
 // All implementations must embed UnimplementedChatServer
 // for forward compatibility
@@ -62,6 +73,8 @@ type ChatServer interface {
 	SendMessage(context.Context, *SendMessageReq) (*SendMessageResp, error)
 	// 获取历史消息
 	GetHistoryMessage(context.Context, *GetHistoryMessageReq) (*GetHistoryMessageResp, error)
+	//获取双方最新的一条消息
+	GetLatestMessage(context.Context, *GetLatestMessageReq) (*GetLatestMessageResp, error)
 	mustEmbedUnimplementedChatServer()
 }
 
@@ -74,6 +87,9 @@ func (UnimplementedChatServer) SendMessage(context.Context, *SendMessageReq) (*S
 }
 func (UnimplementedChatServer) GetHistoryMessage(context.Context, *GetHistoryMessageReq) (*GetHistoryMessageResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHistoryMessage not implemented")
+}
+func (UnimplementedChatServer) GetLatestMessage(context.Context, *GetLatestMessageReq) (*GetLatestMessageResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLatestMessage not implemented")
 }
 func (UnimplementedChatServer) mustEmbedUnimplementedChatServer() {}
 
@@ -124,6 +140,24 @@ func _Chat_GetHistoryMessage_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Chat_GetLatestMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLatestMessageReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatServer).GetLatestMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chat.chat/GetLatestMessage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatServer).GetLatestMessage(ctx, req.(*GetLatestMessageReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Chat_ServiceDesc is the grpc.ServiceDesc for Chat service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -138,6 +172,10 @@ var Chat_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHistoryMessage",
 			Handler:    _Chat_GetHistoryMessage_Handler,
+		},
+		{
+			MethodName: "GetLatestMessage",
+			Handler:    _Chat_GetLatestMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"tik-tok-brief/common/errorx"
+	"tik-tok-brief/service/chat/model"
 
 	"tik-tok-brief/service/chat/rpc/internal/svc"
 	"tik-tok-brief/service/chat/rpc/proto/pb"
@@ -28,11 +29,22 @@ func NewGetHistoryMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 获取历史消息
 func (l *GetHistoryMessageLogic) GetHistoryMessage(in *pb.GetHistoryMessageReq) (*pb.GetHistoryMessageResp, error) {
-	chatList, err := l.svcCtx.ChatModel.FindChatList(l.ctx, in.FromUserId, in.ToUserId)
-	if err != nil && err != sqlx.ErrNotFound {
-		logx.Error("ChatModel.FindChatList err:", err)
-		return nil, errorx.NewStatusDBErr()
+	var err error
+	var chatList []*model.Chat
+	if in.Limit != nil {
+		chatList, err = l.svcCtx.ChatModel.FindChatLimitList(l.ctx, in.FromUserId, in.ToUserId, in.GetLimit())
+		if err != nil && err != sqlx.ErrNotFound {
+			logx.Error("ChatModel.FindChatLimitList err:", err)
+			return nil, errorx.NewStatusDBErr()
+		}
+	} else {
+		chatList, err = l.svcCtx.ChatModel.FindChatList(l.ctx, in.FromUserId, in.ToUserId)
+		if err != nil && err != sqlx.ErrNotFound {
+			logx.Error("ChatModel.FindChatList err:", err)
+			return nil, errorx.NewStatusDBErr()
+		}
 	}
+
 	if err == sqlx.ErrNotFound {
 		return &pb.GetHistoryMessageResp{}, nil
 	}

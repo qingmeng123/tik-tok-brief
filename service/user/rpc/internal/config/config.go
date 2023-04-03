@@ -7,6 +7,7 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
+	FollowRPC zrpc.RpcClientConf
 
 	// mysql
 	Mysql struct { // 数据库配置，除mysql外，可能还有mongo等其他数据库

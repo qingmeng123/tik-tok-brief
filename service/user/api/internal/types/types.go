@@ -89,5 +89,40 @@ type FriendsListReq struct {
 
 type FriendsListResp struct {
 	StatusResponse
-	UserList []User `json:"user_list,omitempty"`
+	UserList []FriendUser `json:"user_list,omitempty"`
+}
+
+type FriendUser struct {
+	User
+	Message string `json:"message,optional"`
+	MsgType int64  `json:"msgType,required"`
+}
+
+type Message struct {
+	Id         int64  `json:"id"`
+	ToUserId   int64  `json:"to_user_id"`
+	FromUserId int64  `json:"from_user_id"`
+	Content    string `json:"content"`
+	CreateTime string `json:"create_time"`
+}
+
+type SendMessageReq struct {
+	Token      string `form:"token" validate:"required"`
+	ToUserId   int64  `form:"to_user_id" validate:"required,gte=0"`
+	ActionType int64  `form:"action_type" validate:"required,gte=1,lte=2"`
+	Content    string `form:"content" validate:"required"`
+}
+
+type SendMessageResp struct {
+	StatusResponse
+}
+
+type HistoryMessageReq struct {
+	Token    string `form:"token" validate:"required"`
+	ToUserId int64  `form:"to_user_id" validate:"required,gte=0"`
+}
+
+type HistoryMessageResp struct {
+	StatusResponse
+	MessageList []Message `json:"message_list,omitempty"`
 }

@@ -2,6 +2,12 @@ package logic
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"tik-tok-brief/common/errorx"
+	"tik-tok-brief/service/chat/rpc/chat"
+	cpb "tik-tok-brief/service/chat/rpc/proto/pb"
+	fpb "tik-tok-brief/service/follow/rpc/proto/pb"
+	"tik-tok-brief/service/user/rpc/proto/pb"
 
 	"tik-tok-brief/service/user/api/internal/svc"
 	"tik-tok-brief/service/user/api/internal/types"
@@ -24,7 +30,53 @@ func NewFriendsListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Frien
 }
 
 func (l *FriendsListLogic) FriendsList(req *types.FriendsListReq) (resp *types.FriendsListResp, err error) {
-	// todo: add your logic here and delete this line
+	userId := l.ctx.Value("user_id").(int64)
+	list, err := l.svcCtx.FollowerRPC.GetFriendsList(l.ctx, &fpb.GetFriendsListReq{UserId: userId})
+	if err != nil {
+		logx.Error("FollowerRPC.GetFriendsList err:", err)
+		return nil, err
+	}
 
-	return
+	ids := make([]int64, len(list.Follows))
+	for i, follow := range list.Follows {
+		ids[i] = follow.UserId
+	}
+
+	//获取users
+	getUserListResp, err := l.svcCtx.UserRPC.GetUserListByIds(l.ctx, &pb.GetUserListByIdsReq{Ids: ids})
+	if err != nil {
+		logx.Error("UserRPC.GetUserListByIds err:", err)
+		return nil, err
+	}
+
+	res := make([]types.FriendUser, len(getUserListResp.Users))
+	err = copier.Copy(&res, getUserListResp)
+	if err != nil {
+		logx.Error("copier Copy err:", err)
+		return nil, errorx.NewInternalErr()
+	}
+
+	//获取最新消息
+	var message *chat.GetLatestMessageResp
+	for i := 0; i < len(res); i++ {
+		message, err = l.svcCtx.ChatRPC.GetLatestMessage(l.ctx, &cpb.GetLatestMessageReq{
+			FromUserId: userId,
+			ToUserId:   res[i].Id,
+		})
+		if err != nil {
+			logx.Error("ChatRPC.GetLatestMessage err:", err)
+			return nil, err
+		}
+		res[i].IsFollow = true
+		res[i].MsgType = message.MsgType
+		res[i].Message = message.Message.Content
+	}
+
+	return &types.FriendsListResp{
+		StatusResponse: types.StatusResponse{
+			StatusCode: int32(errorx.OK),
+			StatusMsg:  errorx.SUCCESS,
+		},
+		UserList: res,
+	}, nil
 }

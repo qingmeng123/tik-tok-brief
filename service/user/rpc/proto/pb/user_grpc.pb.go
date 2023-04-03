@@ -30,6 +30,8 @@ type UserClient interface {
 	GetUser(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserResp, error)
 	//获取token
 	GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error)
+	// 批量获取用户信息
+	GetUserListByIds(ctx context.Context, in *GetUserListByIdsReq, opts ...grpc.CallOption) (*GetUserListByIdsResp, error)
 }
 
 type userClient struct {
@@ -76,6 +78,15 @@ func (c *userClient) GenerateToken(ctx context.Context, in *GenerateTokenReq, op
 	return out, nil
 }
 
+func (c *userClient) GetUserListByIds(ctx context.Context, in *GetUserListByIdsReq, opts ...grpc.CallOption) (*GetUserListByIdsResp, error) {
+	out := new(GetUserListByIdsResp)
+	err := c.cc.Invoke(ctx, "/user.user/GetUserListByIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -88,6 +99,8 @@ type UserServer interface {
 	GetUser(context.Context, *GetUserReq) (*GetUserResp, error)
 	//获取token
 	GenerateToken(context.Context, *GenerateTokenReq) (*GenerateTokenResp, error)
+	// 批量获取用户信息
+	GetUserListByIds(context.Context, *GetUserListByIdsReq) (*GetUserListByIdsResp, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -106,6 +119,9 @@ func (UnimplementedUserServer) GetUser(context.Context, *GetUserReq) (*GetUserRe
 }
 func (UnimplementedUserServer) GenerateToken(context.Context, *GenerateTokenReq) (*GenerateTokenResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateToken not implemented")
+}
+func (UnimplementedUserServer) GetUserListByIds(context.Context, *GetUserListByIdsReq) (*GetUserListByIdsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserListByIds not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -192,6 +208,24 @@ func _User_GenerateToken_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GetUserListByIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserListByIdsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetUserListByIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.user/GetUserListByIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetUserListByIds(ctx, req.(*GetUserListByIdsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -214,6 +248,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateToken",
 			Handler:    _User_GenerateToken_Handler,
+		},
+		{
+			MethodName: "GetUserListByIds",
+			Handler:    _User_GetUserListByIds_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

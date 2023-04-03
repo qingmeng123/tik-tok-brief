@@ -35,7 +35,7 @@ func (l *UnFollowLogic) UnFollow(in *pb.UnFollowReq) (*pb.UnFollowResp, error) {
 
 	if err != nil {
 		//未关注
-		return nil, errorx.NewStatusParamErr(errorx.ERRUNFOLLOWUSER)
+		return nil, errorx.NewStatusParamErr(errorx.ERRFOLLOWUSER)
 	}
 
 	//查看对方是否关注自己

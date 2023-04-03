@@ -45,3 +45,9 @@ func (s *UserServer) GenerateToken(ctx context.Context, in *pb.GenerateTokenReq)
 	l := logic.NewGenerateTokenLogic(ctx, s.svcCtx)
 	return l.GenerateToken(in)
 }
+
+// 批量获取用户信息
+func (s *UserServer) GetUserListByIds(ctx context.Context, in *pb.GetUserListByIdsReq) (*pb.GetUserListByIdsResp, error) {
+	l := logic.NewGetUserListByIdsLogic(ctx, s.svcCtx)
+	return l.GetUserListByIds(in)
+}

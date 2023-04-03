@@ -33,3 +33,9 @@ func (s *ChatServer) GetHistoryMessage(ctx context.Context, in *pb.GetHistoryMes
 	l := logic.NewGetHistoryMessageLogic(ctx, s.svcCtx)
 	return l.GetHistoryMessage(in)
 }
+
+// 获取双方最新的一条消息
+func (s *ChatServer) GetLatestMessage(ctx context.Context, in *pb.GetLatestMessageReq) (*pb.GetLatestMessageResp, error) {
+	l := logic.NewGetLatestMessageLogic(ctx, s.svcCtx)
+	return l.GetLatestMessage(in)
+}

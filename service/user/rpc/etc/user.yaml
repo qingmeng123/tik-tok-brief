@@ -21,3 +21,9 @@ Log:
 JWTAuth:
   AccessSecret: "长路漫漫,唯剑作伴"
   AccessExpire: 600000
+
+FollowRPC:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: follow.rpc

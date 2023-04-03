@@ -13,15 +13,17 @@ import (
 )
 
 type (
-	GenerateTokenReq  = pb.GenerateTokenReq
-	GenerateTokenResp = pb.GenerateTokenResp
-	GetUserReq        = pb.GetUserReq
-	GetUserResp       = pb.GetUserResp
-	LoginReq          = pb.LoginReq
-	LoginResp         = pb.LoginResp
-	RegisterReq       = pb.RegisterReq
-	RegisterResp      = pb.RegisterResp
-	User              = pb.User
+	GenerateTokenReq     = pb.GenerateTokenReq
+	GenerateTokenResp    = pb.GenerateTokenResp
+	GetUserListByIdsReq  = pb.GetUserListByIdsReq
+	GetUserListByIdsResp = pb.GetUserListByIdsResp
+	GetUserReq           = pb.GetUserReq
+	GetUserResp          = pb.GetUserResp
+	LoginReq             = pb.LoginReq
+	LoginResp            = pb.LoginResp
+	RegisterReq          = pb.RegisterReq
+	RegisterResp         = pb.RegisterResp
+	User                 = pb.User
 
 	UserZrpcClient interface {
 		// 用户注册
@@ -32,6 +34,8 @@ type (
 		GetUser(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserResp, error)
 		// 获取token
 		GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error)
+		// 批量获取用户信息
+		GetUserListByIds(ctx context.Context, in *GetUserListByIdsReq, opts ...grpc.CallOption) (*GetUserListByIdsResp, error)
 	}
 
 	defaultUserZrpcClient struct {
@@ -67,4 +71,10 @@ func (m *defaultUserZrpcClient) GetUser(ctx context.Context, in *GetUserReq, opt
 func (m *defaultUserZrpcClient) GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error) {
 	client := pb.NewUserClient(m.cli.Conn())
 	return client.GenerateToken(ctx, in, opts...)
+}
+
+// 批量获取用户信息
+func (m *defaultUserZrpcClient) GetUserListByIds(ctx context.Context, in *GetUserListByIdsReq, opts ...grpc.CallOption) (*GetUserListByIdsResp, error) {
+	client := pb.NewUserClient(m.cli.Conn())
+	return client.GetUserListByIds(ctx, in, opts...)
 }

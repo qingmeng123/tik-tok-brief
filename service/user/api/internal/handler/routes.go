@@ -4,6 +4,7 @@ package handler
 import (
 	"net/http"
 
+	chat "tik-tok-brief/service/user/api/internal/handler/chat"
 	"tik-tok-brief/service/user/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -67,5 +68,24 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithPrefix("/douyin/relation"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.JwtAuthMiddleWare},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/action",
+					Handler: chat.SendMessageHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/chat",
+					Handler: chat.HistoryMessageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/douyin/message"),
 	)
 }

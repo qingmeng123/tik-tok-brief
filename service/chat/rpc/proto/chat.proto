@@ -26,10 +26,23 @@ message SendMessageResp{
 message GetHistoryMessageReq{
   int64 fromUserId = 1;
   int64 toUserId = 2;
+  optional int64 limit=3;   //返回的消息条数
 }
 // 获取历史消息返回体
 message GetHistoryMessageResp{
   repeated Message messageList = 1;
+}
+
+//获取双方最新消息请求体
+message GetLatestMessageReq{
+  int64 fromUserId=1;
+  int64 toUserId=2;
+}
+
+//获取双方最新消息返回体
+message GetLatestMessageResp{
+  Message message=1;
+  int64 msgType=2;// message消息的类型，0 => 当前请求用户接收的消息， 1 => 当前请求用户发送的消息
 }
 
 service chat{
@@ -37,5 +50,7 @@ service chat{
   rpc SendMessage(SendMessageReq) returns(SendMessageResp);
   // 获取历史消息
   rpc GetHistoryMessage(GetHistoryMessageReq) returns(GetHistoryMessageResp);
+  //获取双方最新的一条消息
+  rpc GetLatestMessage(GetLatestMessageReq)returns(GetLatestMessageResp);
 }
 
