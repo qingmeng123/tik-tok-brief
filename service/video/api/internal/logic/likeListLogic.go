@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"github.com/jinzhu/copier"
 	"google.golang.org/grpc/codes"
 	"tik-tok-brief/common/errorx"
@@ -53,7 +52,6 @@ func (l *LikeListLogic) LikeList(req *types.LikeListReq) (resp *types.LikeListRe
 		logx.Error("VideoRPC.GetVideoListByIds err:", err)
 		return nil, err
 	}
-	fmt.Println(videoListByIdsResp)
 
 	res := make([]types.Video, len(videoListByIdsResp.VideoList))
 	_ = copier.Copy(&res, videoListByIdsResp.VideoList)
@@ -63,6 +61,7 @@ func (l *LikeListLogic) LikeList(req *types.LikeListReq) (resp *types.LikeListRe
 	for i, video := range videoListByIdsResp.VideoList {
 		uids[i] = video.UserId
 	}
+
 	userListByIdsResp, err := l.svcCtx.UserRPC.GetUserListByIds(l.ctx, &upb.GetUserListByIdsReq{
 		UserId: &userId,
 		Ids:    uids,

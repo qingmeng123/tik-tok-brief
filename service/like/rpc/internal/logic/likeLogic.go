@@ -50,10 +50,11 @@ func (l *LikeLogic) Like(in *pb.LikeReq) (*pb.LikeResp, error) {
 		err = l.svcCtx.LikeModel.Delete(l.ctx, like.Id)
 		if err != nil {
 			logx.Error("LikeModel.Delete err:", err)
-			return &pb.LikeResp{}, nil
+			return nil, errorx.NewStatusDBErr()
 		}
+		return &pb.LikeResp{}, nil
 	}
 
 	//操作错误
-	return &pb.LikeResp{}, errorx.NewParamErr(errorx.ERRLIKE)
+	return &pb.LikeResp{}, errorx.NewStatusParamErr(errorx.ERRLIKE)
 }

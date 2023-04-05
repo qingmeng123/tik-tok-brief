@@ -41,10 +41,10 @@ func (l *LikeLogic) Like(req *types.LikeReq) (resp *types.LikeResp, err error) {
 
 	//修改点赞数
 	var number int64
+	number = -1
 	if req.ActionType == 1 {
 		number = 1
 	}
-	number = -1
 
 	_, err = l.svcCtx.VideoRPC.UpdateFavoriteCount(l.ctx, &vpb.UpdateFavoriteCountReq{
 		VideoId: req.VideoId,

@@ -45,11 +45,11 @@ func (l *CommentLogic) Comment(req *types.CommentReq) (resp *types.CommentResp, 
 
 	//修改评论数
 	var number int64
+	number = -1
 	if req.ActionType == 1 {
 		number = 1
 		_ = copier.Copy(comment, CommentResp.Comment)
 	}
-	number = -1
 
 	_, err = l.svcCtx.VideoRPC.UpdateCommentCount(l.ctx, &vpb.UpdateCommentCountReq{
 		VideoId: req.VideoId,

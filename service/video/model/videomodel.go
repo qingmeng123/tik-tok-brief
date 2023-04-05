@@ -40,7 +40,7 @@ func (m *defaultVideoModel) FindVideosByIds(ctx context.Context, ids []int64) ([
 
 func (m *defaultVideoModel) UpdateCommentCountByVideoId(ctx context.Context, videoId, number int64) error {
 	query := fmt.Sprintf("update %s set comment_count=comment_count+? where video_id=?", m.table)
-	_, err := m.ExecNoCacheCtx(ctx, query, videoId, number)
+	_, err := m.ExecNoCacheCtx(ctx, query, number, videoId)
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,7 @@ func (m *defaultVideoModel) UpdateCommentCountByVideoId(ctx context.Context, vid
 
 func (m *defaultVideoModel) UpdateFavoriteCountByVideoId(ctx context.Context, videoId, number int64) error {
 	query := fmt.Sprintf("update %s set favorite_count=favorite_count+? where video_id=?", m.table)
-	_, err := m.ExecNoCacheCtx(ctx, query, videoId, number)
+	_, err := m.ExecNoCacheCtx(ctx, query, number, videoId)
 	if err != nil {
 		return err
 	}

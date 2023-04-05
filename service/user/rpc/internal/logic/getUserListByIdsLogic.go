@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"tik-tok-brief/common/errorx"
@@ -41,12 +42,13 @@ func (l *GetUserListByIdsLogic) GetUserListByIds(in *pb.GetUserListByIdsReq) (*p
 	}
 
 	res := make([]*pb.User, len(users))
+
 	err = copier.Copy(&res, users)
 	if err != nil {
 		logx.Error("copier.Copy err:", err)
 		return nil, errorx.NewInternalErr()
 	}
-
+	fmt.Println("res", res)
 	//填充关注信息
 	if in.UserId != nil {
 		for i := 0; i < len(res); i++ {
