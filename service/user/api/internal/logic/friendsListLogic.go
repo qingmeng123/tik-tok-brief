@@ -31,9 +31,9 @@ func NewFriendsListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Frien
 
 func (l *FriendsListLogic) FriendsList(req *types.FriendsListReq) (resp *types.FriendsListResp, err error) {
 	userId := l.ctx.Value("user_id").(int64)
-	list, err := l.svcCtx.FollowerRPC.GetFriendsList(l.ctx, &fpb.GetFriendsListReq{UserId: userId})
+	list, err := l.svcCtx.FollowRPC.GetFriendsList(l.ctx, &fpb.GetFriendsListReq{UserId: userId})
 	if err != nil {
-		logx.Error("FollowerRPC.GetFriendsList err:", err)
+		logx.Error("FollowRPC.GetFriendsList err:", err)
 		return nil, err
 	}
 
@@ -61,7 +61,7 @@ func (l *FriendsListLogic) FriendsList(req *types.FriendsListReq) (resp *types.F
 	for i := 0; i < len(res); i++ {
 		message, err = l.svcCtx.ChatRPC.GetLatestMessage(l.ctx, &cpb.GetLatestMessageReq{
 			FromUserId: userId,
-			ToUserId:   res[i].Id,
+			ToUserId:   res[i].UserId,
 		})
 		if err != nil {
 			logx.Error("ChatRPC.GetLatestMessage err:", err)

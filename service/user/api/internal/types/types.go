@@ -2,17 +2,14 @@
 package types
 
 type User struct {
-	Id              int64  `json:"id"`
-	Username        string `json:"name"`
-	FollowCount     int64  `json:"follow_count"`
-	FollowerCount   int64  `json:"follower_count"`
-	IsFollow        bool   `json:"is_follow"`
-	Avatar          string `json:"avatar,optional"`
-	BackgroundImage string `json:"background_image,optional"`
-	Signature       string `json:"Signature,optional"`
-	TotalFavorited  int64  `json:"total_favorited,optional"`
-	WorkCount       int64  `json:"work_count,optional"`
-	FavoriteCount   int64  `json:"favorite_count,optional"`
+	UserId         int64  `json:"id"`
+	Username       string `json:"name"`
+	FollowCount    int64  `json:"follow_count"`
+	FollowerCount  int64  `json:"follower_count"`
+	IsFollow       bool   `json:"is_follow"`
+	TotalFavorited int64  `json:"total_favorited,optional"`
+	WorkCount      int64  `json:"work_count,optional"`
+	FavoriteCount  int64  `json:"favorite_count,optional"`
 }
 
 type StatusResponse struct {

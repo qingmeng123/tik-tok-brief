@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"tik-tok-brief/common/errorx"
@@ -48,13 +47,12 @@ func (l *GetUserListByIdsLogic) GetUserListByIds(in *pb.GetUserListByIdsReq) (*p
 		logx.Error("copier.Copy err:", err)
 		return nil, errorx.NewInternalErr()
 	}
-	fmt.Println("res", res)
 	//填充关注信息
 	if in.UserId != nil {
 		for i := 0; i < len(res); i++ {
 			infoResp, err := l.svcCtx.FollowerRPC.GetFollowInfo(l.ctx, &fpb.GetFollowInfoReq{
 				UserId:   in.GetUserId(),
-				ToUserId: res[i].UserID,
+				ToUserId: res[i].UserId,
 			})
 			if err != nil {
 				logx.Error("FollowerRPC.GetFollowInfo err:", err)

@@ -32,6 +32,12 @@ type UserClient interface {
 	GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error)
 	// 批量获取用户信息
 	GetUserListByIds(ctx context.Context, in *GetUserListByIdsReq, opts ...grpc.CallOption) (*GetUserListByIdsResp, error)
+	//更新用户粉丝数
+	UpdateUserFollowerCount(ctx context.Context, in *UpdateUserFollowerCountReq, opts ...grpc.CallOption) (*UpdateUserFollowerCountResp, error)
+	//更新用户关注数
+	UpdateUserFollowCount(ctx context.Context, in *UpdateUserFollowCountReq, opts ...grpc.CallOption) (*UpdateUserFollowCountResp, error)
+	//更新用户作品数
+	UpdateUserWorkCount(ctx context.Context, in *UpdateUserWorkCountReq, opts ...grpc.CallOption) (*UpdateUserWorkCountResp, error)
 }
 
 type userClient struct {
@@ -87,6 +93,33 @@ func (c *userClient) GetUserListByIds(ctx context.Context, in *GetUserListByIdsR
 	return out, nil
 }
 
+func (c *userClient) UpdateUserFollowerCount(ctx context.Context, in *UpdateUserFollowerCountReq, opts ...grpc.CallOption) (*UpdateUserFollowerCountResp, error) {
+	out := new(UpdateUserFollowerCountResp)
+	err := c.cc.Invoke(ctx, "/user.user/UpdateUserFollowerCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) UpdateUserFollowCount(ctx context.Context, in *UpdateUserFollowCountReq, opts ...grpc.CallOption) (*UpdateUserFollowCountResp, error) {
+	out := new(UpdateUserFollowCountResp)
+	err := c.cc.Invoke(ctx, "/user.user/UpdateUserFollowCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) UpdateUserWorkCount(ctx context.Context, in *UpdateUserWorkCountReq, opts ...grpc.CallOption) (*UpdateUserWorkCountResp, error) {
+	out := new(UpdateUserWorkCountResp)
+	err := c.cc.Invoke(ctx, "/user.user/UpdateUserWorkCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -101,6 +134,12 @@ type UserServer interface {
 	GenerateToken(context.Context, *GenerateTokenReq) (*GenerateTokenResp, error)
 	// 批量获取用户信息
 	GetUserListByIds(context.Context, *GetUserListByIdsReq) (*GetUserListByIdsResp, error)
+	//更新用户粉丝数
+	UpdateUserFollowerCount(context.Context, *UpdateUserFollowerCountReq) (*UpdateUserFollowerCountResp, error)
+	//更新用户关注数
+	UpdateUserFollowCount(context.Context, *UpdateUserFollowCountReq) (*UpdateUserFollowCountResp, error)
+	//更新用户作品数
+	UpdateUserWorkCount(context.Context, *UpdateUserWorkCountReq) (*UpdateUserWorkCountResp, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -122,6 +161,15 @@ func (UnimplementedUserServer) GenerateToken(context.Context, *GenerateTokenReq)
 }
 func (UnimplementedUserServer) GetUserListByIds(context.Context, *GetUserListByIdsReq) (*GetUserListByIdsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserListByIds not implemented")
+}
+func (UnimplementedUserServer) UpdateUserFollowerCount(context.Context, *UpdateUserFollowerCountReq) (*UpdateUserFollowerCountResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserFollowerCount not implemented")
+}
+func (UnimplementedUserServer) UpdateUserFollowCount(context.Context, *UpdateUserFollowCountReq) (*UpdateUserFollowCountResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserFollowCount not implemented")
+}
+func (UnimplementedUserServer) UpdateUserWorkCount(context.Context, *UpdateUserWorkCountReq) (*UpdateUserWorkCountResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserWorkCount not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -226,6 +274,60 @@ func _User_GetUserListByIds_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_UpdateUserFollowerCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserFollowerCountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).UpdateUserFollowerCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.user/UpdateUserFollowerCount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).UpdateUserFollowerCount(ctx, req.(*UpdateUserFollowerCountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_UpdateUserFollowCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserFollowCountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).UpdateUserFollowCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.user/UpdateUserFollowCount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).UpdateUserFollowCount(ctx, req.(*UpdateUserFollowCountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_UpdateUserWorkCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserWorkCountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).UpdateUserWorkCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.user/UpdateUserWorkCount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).UpdateUserWorkCount(ctx, req.(*UpdateUserWorkCountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -252,6 +354,18 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserListByIds",
 			Handler:    _User_GetUserListByIds_Handler,
+		},
+		{
+			MethodName: "UpdateUserFollowerCount",
+			Handler:    _User_UpdateUserFollowerCount_Handler,
+		},
+		{
+			MethodName: "UpdateUserFollowCount",
+			Handler:    _User_UpdateUserFollowCount_Handler,
+		},
+		{
+			MethodName: "UpdateUserWorkCount",
+			Handler:    _User_UpdateUserWorkCount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

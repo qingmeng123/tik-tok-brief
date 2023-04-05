@@ -8,17 +8,14 @@ info(
 )
 
 type User {
-	Id              int64  `json:"id"`
-	Username        string `json:"name"`
-	FollowCount     int64  `json:"follow_count"`
-	FollowerCount   int64  `json:"follower_count"`
-	IsFollow        bool   `json:"is_follow"`
-	Avatar          string `json:"avatar,optional"`
-	BackgroundImage string `json:"background_image,optional"`
-	Signature       string `json:"Signature,optional"`
-	TotalFavorited  int64  `json:"total_favorited,optional"`
-	WorkCount       int64  `json:"work_count,optional"`
-	FavoriteCount   int64  `json:"favorite_count,optional"`
+	UserId         int64  `json:"id"`
+	Username       string `json:"name"`
+	FollowCount    int64  `json:"follow_count"`
+	FollowerCount  int64  `json:"follower_count"`
+	IsFollow       bool   `json:"is_follow"`
+	TotalFavorited int64  `json:"total_favorited,optional"`
+	WorkCount      int64  `json:"work_count,optional"`
+	FavoriteCount  int64  `json:"favorite_count,optional"`
 }
 
 //Status响应
@@ -189,16 +186,16 @@ service user-api{
 }
 
 @server(
-	prefix : douyin/message
+	prefix : douyin
 	group : chat
-	middleware : JwtAuthMiddleWare
+	middleware : JwtAuthMiddleware
 )
 service user-api {
 	@doc "发送消息"
 	@handler SendMessage
-	post /action (SendMessageReq) returns (SendMessageResp)
+	post /message/action (SendMessageReq) returns (SendMessageResp)
 	
 	@doc "历史消息"
 	@handler HistoryMessage
-	get /chat (HistoryMessageReq) returns (HistoryMessageResp)
+	get /message/chat (HistoryMessageReq) returns (HistoryMessageResp)
 }

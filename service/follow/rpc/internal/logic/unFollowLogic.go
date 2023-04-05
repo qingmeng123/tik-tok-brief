@@ -38,17 +38,17 @@ func (l *UnFollowLogic) UnFollow(in *pb.UnFollowReq) (*pb.UnFollowResp, error) {
 		return nil, errorx.NewStatusParamErr(errorx.ERRFOLLOWUSER)
 	}
 
+	//取消关注
+	err = l.svcCtx.FollowModel.Delete(l.ctx, follow.Id)
+	if err != nil && err != sqlx.ErrNotFound {
+		logx.Error("FollowModel.Delete err:", err)
+		return nil, errorx.NewStatusDBErr()
+	}
+
 	//查看对方是否关注自己
 	follower, err := l.svcCtx.FollowModel.FindIsFriendByUsersId(l.ctx, in.ToUserId, in.UserId)
 	if err != nil && err != sqlx.ErrNotFound {
 		logx.Error("FollowModel.FindIsFriendByUsersId err:", err)
-		return nil, errorx.NewStatusDBErr()
-	}
-
-	//取消关注
-	err = l.svcCtx.FollowModel.Delete(l.ctx, follow.Id)
-	if err != nil {
-		logx.Error("FollowModel.Delete err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
 

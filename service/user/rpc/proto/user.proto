@@ -6,20 +6,16 @@ option go_package = "./pb";   // 指定生成的Go代码在你项目中的导入
 
 // 用户实体
 message User {
-  int64 userID = 1; // 用户id
-  string userName = 2; // 用户名
+  int64 userId = 1; // 用户id
+  string username = 2; // 用户名
   string password=3;  //密码
-  string name=4;      //昵称
-  int64 followCount = 5; // 关注总数
-  int64 followerCount = 6; // 粉丝总数
-  bool isFollow = 7; // true-已关注，false-未关注
-  string avatar = 8; //用户头像
-  string backgroundImage = 9; //用户个人页顶部大图
-  string signature = 10; //个人简介
-  int64 totalFavorited = 11; //获赞数量
-  int64 workCount = 12; //作品数量
-  int64 favoriteCount = 13; //点赞数量
-  int64 createTime=14;    //创建时间
+  int64 followCount = 4; // 关注总数
+  int64 followerCount = 5; // 粉丝总数
+  bool isFollow = 6; // true-已关注，false-未关注
+  int64 totalFavorited = 7; //获赞数量
+  int64 workCount = 8; //作品数量
+  int64 favoriteCount = 9; //点赞数量
+  int64 createTime=10;    //创建时间
 }
 
 //用户注册请求
@@ -75,6 +71,23 @@ message GetUserListByIdsResp {
   repeated User users = 1;
 }
 
+message UpdateUserFollowerCountReq{
+  int64 userId=1;
+  int64 number=2;
+}
+message UpdateUserFollowerCountResp{}
+
+message UpdateUserFollowCountReq{
+  int64 userId=1;
+  int64 number=2;
+}
+message UpdateUserFollowCountResp{}
+
+message UpdateUserWorkCountReq{
+  int64 userId=1;
+  int64 number=2;
+}
+message UpdateUserWorkCountResp{}
 
 service user{
   //用户注册
@@ -91,4 +104,11 @@ service user{
 
   // 批量获取用户信息
   rpc GetUserListByIds(GetUserListByIdsReq) returns (GetUserListByIdsResp);
+
+  //更新用户粉丝数
+  rpc UpdateUserFollowerCount(UpdateUserFollowerCountReq)returns(UpdateUserFollowerCountResp);
+  //更新用户关注数
+  rpc UpdateUserFollowCount(UpdateUserFollowCountReq)returns(UpdateUserFollowCountResp);
+  //更新用户作品数
+  rpc UpdateUserWorkCount(UpdateUserWorkCountReq)returns(UpdateUserWorkCountResp);
 }

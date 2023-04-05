@@ -13,17 +13,23 @@ import (
 )
 
 type (
-	GenerateTokenReq     = pb.GenerateTokenReq
-	GenerateTokenResp    = pb.GenerateTokenResp
-	GetUserListByIdsReq  = pb.GetUserListByIdsReq
-	GetUserListByIdsResp = pb.GetUserListByIdsResp
-	GetUserReq           = pb.GetUserReq
-	GetUserResp          = pb.GetUserResp
-	LoginReq             = pb.LoginReq
-	LoginResp            = pb.LoginResp
-	RegisterReq          = pb.RegisterReq
-	RegisterResp         = pb.RegisterResp
-	User                 = pb.User
+	GenerateTokenReq            = pb.GenerateTokenReq
+	GenerateTokenResp           = pb.GenerateTokenResp
+	GetUserListByIdsReq         = pb.GetUserListByIdsReq
+	GetUserListByIdsResp        = pb.GetUserListByIdsResp
+	GetUserReq                  = pb.GetUserReq
+	GetUserResp                 = pb.GetUserResp
+	LoginReq                    = pb.LoginReq
+	LoginResp                   = pb.LoginResp
+	RegisterReq                 = pb.RegisterReq
+	RegisterResp                = pb.RegisterResp
+	UpdateUserFollowCountReq    = pb.UpdateUserFollowCountReq
+	UpdateUserFollowCountResp   = pb.UpdateUserFollowCountResp
+	UpdateUserFollowerCountReq  = pb.UpdateUserFollowerCountReq
+	UpdateUserFollowerCountResp = pb.UpdateUserFollowerCountResp
+	UpdateUserWorkCountReq      = pb.UpdateUserWorkCountReq
+	UpdateUserWorkCountResp     = pb.UpdateUserWorkCountResp
+	User                        = pb.User
 
 	UserZrpcClient interface {
 		// 用户注册
@@ -36,6 +42,12 @@ type (
 		GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error)
 		// 批量获取用户信息
 		GetUserListByIds(ctx context.Context, in *GetUserListByIdsReq, opts ...grpc.CallOption) (*GetUserListByIdsResp, error)
+		// 更新用户粉丝数
+		UpdateUserFollowerCount(ctx context.Context, in *UpdateUserFollowerCountReq, opts ...grpc.CallOption) (*UpdateUserFollowerCountResp, error)
+		// 更新用户关注数
+		UpdateUserFollowCount(ctx context.Context, in *UpdateUserFollowCountReq, opts ...grpc.CallOption) (*UpdateUserFollowCountResp, error)
+		// 更新用户作品数
+		UpdateUserWorkCount(ctx context.Context, in *UpdateUserWorkCountReq, opts ...grpc.CallOption) (*UpdateUserWorkCountResp, error)
 	}
 
 	defaultUserZrpcClient struct {
@@ -77,4 +89,22 @@ func (m *defaultUserZrpcClient) GenerateToken(ctx context.Context, in *GenerateT
 func (m *defaultUserZrpcClient) GetUserListByIds(ctx context.Context, in *GetUserListByIdsReq, opts ...grpc.CallOption) (*GetUserListByIdsResp, error) {
 	client := pb.NewUserClient(m.cli.Conn())
 	return client.GetUserListByIds(ctx, in, opts...)
+}
+
+// 更新用户粉丝数
+func (m *defaultUserZrpcClient) UpdateUserFollowerCount(ctx context.Context, in *UpdateUserFollowerCountReq, opts ...grpc.CallOption) (*UpdateUserFollowerCountResp, error) {
+	client := pb.NewUserClient(m.cli.Conn())
+	return client.UpdateUserFollowerCount(ctx, in, opts...)
+}
+
+// 更新用户关注数
+func (m *defaultUserZrpcClient) UpdateUserFollowCount(ctx context.Context, in *UpdateUserFollowCountReq, opts ...grpc.CallOption) (*UpdateUserFollowCountResp, error) {
+	client := pb.NewUserClient(m.cli.Conn())
+	return client.UpdateUserFollowCount(ctx, in, opts...)
+}
+
+// 更新用户作品数
+func (m *defaultUserZrpcClient) UpdateUserWorkCount(ctx context.Context, in *UpdateUserWorkCountReq, opts ...grpc.CallOption) (*UpdateUserWorkCountResp, error) {
+	client := pb.NewUserClient(m.cli.Conn())
+	return client.UpdateUserWorkCount(ctx, in, opts...)
 }

@@ -13,7 +13,7 @@ import (
 type ServiceContext struct {
 	Config            config.Config
 	UserRPC           user.UserZrpcClient
-	FollowerRPC       follow.FollowZrpcClient
+	FollowRPC         follow.FollowZrpcClient
 	ChatRPC           chat.Chat
 	JwtAuthMiddleware rest.Middleware
 }
@@ -23,7 +23,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:            c,
 		UserRPC:           user.NewUserZrpcClient(zrpc.MustNewClient(c.UserRPC)),
-		FollowerRPC:       follow.NewFollowZrpcClient(zrpc.MustNewClient(c.FollowRPC)),
+		FollowRPC:         follow.NewFollowZrpcClient(zrpc.MustNewClient(c.FollowRPC)),
 		ChatRPC:           chat.NewChat(zrpc.MustNewClient(c.ChatRPC)),
 		JwtAuthMiddleware: middleware.NewJwtAuthMiddleware(c.JWTAuth.AccessSecret).Handle,
 	}

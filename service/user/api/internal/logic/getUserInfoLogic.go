@@ -2,7 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
 	"tik-tok-brief/common/errorx"
+	fpb "tik-tok-brief/service/follow/rpc/proto/pb"
 	"tik-tok-brief/service/user/api/internal/svc"
 	"tik-tok-brief/service/user/api/internal/types"
 	"tik-tok-brief/service/user/rpc/proto/pb"
@@ -34,23 +36,21 @@ func (l *GetUserInfoLogic) GetUserInfo(req *types.UserInfoReq) (resp *types.User
 		return nil, err
 	}
 
-	resUser := &types.User{
-		Id:              user.User.UserID,
-		Username:        user.User.UserName,
-		FollowCount:     user.User.FollowCount,
-		FollowerCount:   user.User.FollowerCount,
-		IsFollow:        true,
-		Avatar:          user.User.Avatar,
-		BackgroundImage: user.User.BackgroundImage,
-		Signature:       user.User.Signature,
-		TotalFavorited:  user.User.TotalFavorited,
-		WorkCount:       user.User.WorkCount,
-		FavoriteCount:   user.User.FavoriteCount,
-	}
+	resUser := new(types.User)
 
-	//查看自身的信息
-	if userID.(int64) == req.UserId {
-		resUser.IsFollow = false
+	_ = copier.Copy(resUser, user.User)
+
+	//查看关注信息
+	infoResp, err := l.svcCtx.FollowRPC.GetFollowInfo(l.ctx, &fpb.GetFollowInfoReq{
+		UserId:   userID.(int64),
+		ToUserId: req.UserId,
+	})
+	if err != nil {
+		logx.Error("FollowRPC.GetFollowInfo err:", err)
+		return nil, err
+	}
+	if infoResp != nil && infoResp.IsFollow {
+		resUser.IsFollow = true
 	}
 
 	return &types.UserInfoResp{

@@ -43,22 +43,18 @@ type (
 	}
 
 	User struct {
-		Id              int64          `db:"id"`
-		UserId          int64          `db:"user_id"`
-		Username        string         `db:"username"`
-		Password        string         `db:"password"`
-		Name            sql.NullString `db:"name"`
-		FollowCount     sql.NullInt64  `db:"follow_count"`
-		FollowerCount   sql.NullInt64  `db:"follower_count"`
-		IsFollow        int64          `db:"is_follow"`
-		Avatar          sql.NullString `db:"avatar"`
-		BackgroundImage sql.NullString `db:"background_image"`
-		Signature       sql.NullString `db:"signature"`
-		TotalFavorited  int64          `db:"total_favorited"`
-		WorkCount       int64          `db:"work_count"`
-		FavoriteCount   int64          `db:"favorite_count"`
-		CreateTime      time.Time      `db:"create_time"`
-		UpdateTime      time.Time      `db:"update_time"`
+		Id             int64     `db:"id"`
+		UserId         int64     `db:"user_id"`
+		Username       string    `db:"username"`
+		Password       string    `db:"password"`
+		FollowCount    int64     `db:"follow_count"`
+		FollowerCount  int64     `db:"follower_count"`
+		IsFollow       int64     `db:"is_follow"`
+		TotalFavorited int64     `db:"total_favorited"`
+		WorkCount      int64     `db:"work_count"`
+		FavoriteCount  int64     `db:"favorite_count"`
+		CreateTime     time.Time `db:"create_time"`
+		UpdateTime     time.Time `db:"update_time"`
 	}
 )
 
@@ -147,8 +143,8 @@ func (m *defaultUserModel) Insert(ctx context.Context, data *User) (sql.Result, 
 	tikTokUserUserUserIdKey := fmt.Sprintf("%s%v", cacheTikTokUserUserUserIdPrefix, data.UserId)
 	tikTokUserUserUsernameKey := fmt.Sprintf("%s%v", cacheTikTokUserUserUsernamePrefix, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Password, data.Name, data.FollowCount, data.FollowerCount, data.IsFollow, data.Avatar, data.BackgroundImage, data.Signature, data.TotalFavorited, data.WorkCount, data.FavoriteCount)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Password, data.FollowCount, data.FollowerCount, data.IsFollow, data.TotalFavorited, data.WorkCount, data.FavoriteCount)
 	}, tikTokUserUserIdKey, tikTokUserUserUserIdKey, tikTokUserUserUsernameKey)
 	return ret, err
 }
@@ -164,7 +160,7 @@ func (m *defaultUserModel) Update(ctx context.Context, newData *User) error {
 	tikTokUserUserUsernameKey := fmt.Sprintf("%s%v", cacheTikTokUserUserUsernamePrefix, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.UserId, newData.Username, newData.Password, newData.Name, newData.FollowCount, newData.FollowerCount, newData.IsFollow, newData.Avatar, newData.BackgroundImage, newData.Signature, newData.TotalFavorited, newData.WorkCount, newData.FavoriteCount, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.UserId, newData.Username, newData.Password, newData.FollowCount, newData.FollowerCount, newData.IsFollow, newData.TotalFavorited, newData.WorkCount, newData.FavoriteCount, newData.Id)
 	}, tikTokUserUserIdKey, tikTokUserUserUserIdKey, tikTokUserUserUsernameKey)
 	return err
 }

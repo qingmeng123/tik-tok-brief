@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"tik-tok-brief/common/errorx"
 
@@ -29,20 +30,16 @@ func NewGetUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserLo
 func (l *GetUserLogic) GetUser(in *pb.GetUserReq) (*pb.GetUserResp, error) {
 	//验证请求的用户ID
 	user, err := l.svcCtx.UserModel.FindOneByUserId(l.ctx, in.UserID)
-	if err!=nil&&err!=sqlx.ErrNotFound{
-		logx.Error("get_user FindOneByUserId err:",err)
+	if err != nil && err != sqlx.ErrNotFound {
+		logx.Error("get_user FindOneByUserId err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
-
-	if err!=nil{
+	if err != nil {
 		return nil, errorx.NewStatusParamErr(errorx.ERRUSERID)
 	}
 
-	res:=&pb.User{
-		UserID:user.UserId,
-		UserName: user.Username,
-
-	}
+	res := new(pb.User)
+	_ = copier.Copy(res, user)
 
 	return &pb.GetUserResp{User: res}, nil
 }

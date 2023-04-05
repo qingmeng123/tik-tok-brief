@@ -29,9 +29,9 @@ func NewFollowerListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Foll
 
 func (l *FollowerListLogic) FollowerList(req *types.FollowerListReq) (resp *types.FollowerListResp, err error) {
 	userId := l.ctx.Value("user_id").(int64)
-	list, err := l.svcCtx.FollowerRPC.GetFansListByUserId(l.ctx, &fpb.GetFansListByUserIdReq{UserId: req.UserId})
+	list, err := l.svcCtx.FollowRPC.GetFansListByUserId(l.ctx, &fpb.GetFansListByUserIdReq{UserId: req.UserId})
 	if err != nil {
-		logx.Error("FollowerRPC.GetFansListByUserId err:", err)
+		logx.Error("FollowRPC.GetFansListByUserId err:", err)
 		return nil, err
 	}
 

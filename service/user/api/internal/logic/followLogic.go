@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"tik-tok-brief/common/errorx"
 	fpb "tik-tok-brief/service/follow/rpc/proto/pb"
 	"tik-tok-brief/service/user/api/internal/svc"
@@ -40,35 +41,57 @@ func (l *FollowLogic) Follow(req *types.FollowReq) (resp *types.FollowResp, err 
 
 	//关注
 	if req.ActionType == 1 {
-		_, err = l.svcCtx.FollowerRPC.Follow(l.ctx, &fpb.FollowReq{
+		_, err = l.svcCtx.FollowRPC.Follow(l.ctx, &fpb.FollowReq{
 			UserId:   userId,
 			ToUserId: req.ToUserId,
 		})
 		if err != nil {
-			logx.Error("FollowerRPC.Follow err:", err)
+			logx.Error("FollowRPC.Follow err:", err)
 			return nil, err
 		}
-		return &types.FollowResp{StatusResponse: types.StatusResponse{
-			StatusCode: int32(errorx.OK),
-			StatusMsg:  errorx.SUCCESS,
-		}}, nil
 	}
-
+	fmt.Println(req)
 	//取消关注
 	if req.ActionType == 2 {
-		_, err = l.svcCtx.FollowerRPC.UnFollow(l.ctx, &fpb.UnFollowReq{
+		_, err = l.svcCtx.FollowRPC.UnFollow(l.ctx, &fpb.UnFollowReq{
 			UserId:   userId,
 			ToUserId: req.ToUserId,
 		})
 		if err != nil {
-			logx.Error("FollowerRPC.UnFollow err:", err)
+			logx.Error("FollowRPC.UnFollow err:", err)
 			return nil, err
 		}
-		return &types.FollowResp{StatusResponse: types.StatusResponse{
-			StatusCode: int32(errorx.OK),
-			StatusMsg:  errorx.SUCCESS,
-		}}, nil
+	}
+	fmt.Println(req)
+	//变更登录用户关注数
+	var number int64
+	number = 1
+	if req.ActionType == 2 {
+		number = -1
 	}
 
-	return &types.FollowResp{}, errorx.NewParamErr(errorx.ERRFOLLOWUSER)
+	_, err = l.svcCtx.UserRPC.UpdateUserFollowCount(l.ctx, &upb.UpdateUserFollowCountReq{
+		UserId: userId,
+		Number: number,
+	})
+	if err != nil {
+		logx.Error("UserRPC.UpdateUserFollowCount err:", err)
+		return nil, err
+	}
+
+	//变更关注用户粉丝数
+	_, err = l.svcCtx.UserRPC.UpdateUserFollowerCount(l.ctx, &upb.UpdateUserFollowerCountReq{
+		UserId: req.ToUserId,
+		Number: number,
+	})
+	if err != nil {
+		logx.Error("UserRPC.UpdateUserFollowerCount err:", err)
+		return nil, err
+	}
+
+	return &types.FollowResp{StatusResponse: types.StatusResponse{
+		StatusCode: int32(errorx.OK),
+		StatusMsg:  errorx.SUCCESS,
+	}}, nil
+
 }

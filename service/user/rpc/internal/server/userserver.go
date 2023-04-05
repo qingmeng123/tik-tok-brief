@@ -51,3 +51,21 @@ func (s *UserServer) GetUserListByIds(ctx context.Context, in *pb.GetUserListByI
 	l := logic.NewGetUserListByIdsLogic(ctx, s.svcCtx)
 	return l.GetUserListByIds(in)
 }
+
+// 更新用户粉丝数
+func (s *UserServer) UpdateUserFollowerCount(ctx context.Context, in *pb.UpdateUserFollowerCountReq) (*pb.UpdateUserFollowerCountResp, error) {
+	l := logic.NewUpdateUserFollowerCountLogic(ctx, s.svcCtx)
+	return l.UpdateUserFollowerCount(in)
+}
+
+// 更新用户关注数
+func (s *UserServer) UpdateUserFollowCount(ctx context.Context, in *pb.UpdateUserFollowCountReq) (*pb.UpdateUserFollowCountResp, error) {
+	l := logic.NewUpdateUserFollowCountLogic(ctx, s.svcCtx)
+	return l.UpdateUserFollowCount(in)
+}
+
+// 更新用户作品数
+func (s *UserServer) UpdateUserWorkCount(ctx context.Context, in *pb.UpdateUserWorkCountReq) (*pb.UpdateUserWorkCountResp, error) {
+	l := logic.NewUpdateUserWorkCountLogic(ctx, s.svcCtx)
+	return l.UpdateUserWorkCount(in)
+}

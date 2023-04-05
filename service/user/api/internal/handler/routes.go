@@ -76,16 +76,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
-					Path:    "/action",
+					Path:    "/message/action",
 					Handler: chat.SendMessageHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/chat",
+					Path:    "/message/chat",
 					Handler: chat.HistoryMessageHandler(serverCtx),
 				},
 			}...,
 		),
-		rest.WithPrefix("/douyin/message"),
+		rest.WithPrefix("/douyin"),
 	)
 }

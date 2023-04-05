@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"tik-tok-brief/common/errorx"
 	filepb "tik-tok-brief/service/file/rpc/proto/pb"
+	"tik-tok-brief/service/user/rpc/proto/pb"
 	"tik-tok-brief/service/video/api/internal/svc"
 	"tik-tok-brief/service/video/api/internal/types"
 	videopb "tik-tok-brief/service/video/rpc/proto/pb"
@@ -89,6 +90,16 @@ func (l *PublishVideoLogic) PublishVideo(req *types.PublishReq) (resp *types.Pub
 
 	if err != nil {
 		logx.Error("videoRPC_saveVideo err:", err)
+		return nil, err
+	}
+
+	//增加作品数
+	_, err = l.svcCtx.UserRPC.UpdateUserWorkCount(l.ctx, &pb.UpdateUserWorkCountReq{
+		UserId: userId.(int64),
+		Number: 1,
+	})
+	if err != nil {
+		logx.Error("UserRPC.UpdateUserWorkCount err:", err)
 		return nil, err
 	}
 
