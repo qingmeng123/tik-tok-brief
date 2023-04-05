@@ -35,6 +35,9 @@ func (l *CommentsListLogic) CommentsList(req *types.CommentsListReq) (resp *type
 	}
 	res := make([]types.Comment, len(listResp.Comments))
 	_ = copier.Copy(&res, listResp.Comments)
+	for i := 0; i < len(res); i++ {
+		res[i].CreateDate = listResp.Comments[i].CreateTime
+	}
 	return &types.CommentsListResp{
 		Status: types.Status{
 			StatusCode: uint32(codes.OK),
