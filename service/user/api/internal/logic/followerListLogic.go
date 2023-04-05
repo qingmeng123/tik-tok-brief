@@ -48,7 +48,7 @@ func (l *FollowerListLogic) FollowerList(req *types.FollowerListReq) (resp *type
 	}
 
 	res := make([]types.User, len(getUserListResp.Users))
-	err = copier.Copy(&res, getUserListResp)
+	err = copier.Copy(&res, getUserListResp.Users)
 	if err != nil {
 		logx.Error("copier Copy err:", err)
 		return nil, errorx.NewInternalErr()

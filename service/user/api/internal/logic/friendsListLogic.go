@@ -39,7 +39,7 @@ func (l *FriendsListLogic) FriendsList(req *types.FriendsListReq) (resp *types.F
 
 	ids := make([]int64, len(list.Follows))
 	for i, follow := range list.Follows {
-		ids[i] = follow.UserId
+		ids[i] = follow.ToUserId
 	}
 
 	//获取users
@@ -50,7 +50,7 @@ func (l *FriendsListLogic) FriendsList(req *types.FriendsListReq) (resp *types.F
 	}
 
 	res := make([]types.FriendUser, len(getUserListResp.Users))
-	err = copier.Copy(&res, getUserListResp)
+	err = copier.Copy(&res, getUserListResp.Users)
 	if err != nil {
 		logx.Error("copier Copy err:", err)
 		return nil, errorx.NewInternalErr()
@@ -68,8 +68,11 @@ func (l *FriendsListLogic) FriendsList(req *types.FriendsListReq) (resp *types.F
 			return nil, err
 		}
 		res[i].IsFollow = true
-		res[i].MsgType = message.MsgType
-		res[i].Message = message.Message.Content
+		//有消息
+		if message.MsgType == 0 || message.MsgType == 1 {
+			res[i].MsgType = message.MsgType
+			res[i].Message = message.Message.Content
+		}
 	}
 
 	return &types.FriendsListResp{

@@ -28,22 +28,28 @@ func NewGetLatestMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 获取双方最新的一条消息
 func (l *GetLatestMessageLogic) GetLatestMessage(in *pb.GetLatestMessageReq) (*pb.GetLatestMessageResp, error) {
-	var message, rmessage *model.Chat
 	var err error
-	message, err = l.svcCtx.ChatModel.FindOneByUsers(l.ctx, in.ToUserId, in.FromUserId)
+	message, err := l.svcCtx.ChatModel.FindOneByUsers(l.ctx, in.FromUserId, in.ToUserId)
 	if err != nil && err != sqlx.ErrNotFound {
 		logx.Error("ChatModel.FindChatLimitList err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
+	//没查询到时会返回空指针,给其赋予空结构体,用于比较日期
+	if err == sqlx.ErrNotFound {
+		message = &model.Chat{}
+	}
 
-	rmessage, err = l.svcCtx.ChatModel.FindOneByUsers(l.ctx, in.ToUserId, in.FromUserId)
+	rmessage, err := l.svcCtx.ChatModel.FindOneByUsers(l.ctx, in.ToUserId, in.FromUserId)
 	if err != nil && err != sqlx.ErrNotFound {
 		logx.Error("ChatModel.FindChatLimitList err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
-
-	if message == nil && rmessage == nil {
-		return &pb.GetLatestMessageResp{}, nil
+	if err == sqlx.ErrNotFound {
+		rmessage = &model.Chat{}
+	}
+	//若没有消息
+	if message.CreateTime.Unix() == rmessage.CreateTime.Unix() {
+		return &pb.GetLatestMessageResp{MsgType: 2}, nil
 	}
 
 	res := new(pb.Message)
@@ -51,8 +57,9 @@ func (l *GetLatestMessageLogic) GetLatestMessage(in *pb.GetLatestMessageReq) (*p
 	if message.CreateTime.Unix() > rmessage.CreateTime.Unix() {
 		_ = copier.Copy(res, message)
 		msgType = 1
+	} else {
+		_ = copier.Copy(res, rmessage)
+		msgType = 0
 	}
-	_ = copier.Copy(res, rmessage)
-	msgType = 0
 	return &pb.GetLatestMessageResp{Message: res, MsgType: msgType}, nil
 }

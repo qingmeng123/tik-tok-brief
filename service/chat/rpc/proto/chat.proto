@@ -42,7 +42,7 @@ message GetLatestMessageReq{
 //获取双方最新消息返回体
 message GetLatestMessageResp{
   Message message=1;
-  int64 msgType=2;// message消息的类型，0 => 当前请求用户接收的消息， 1 => 当前请求用户发送的消息
+  int64 msgType=2;// message消息的类型，0 => 当前请求用户接收的消息， 1 => 当前请求用户发送的消息,2  => 没有消息
 }
 
 service chat{
