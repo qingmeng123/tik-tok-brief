@@ -46,6 +46,33 @@ message FeedResp{
   repeated Video videoList = 2;
 }
 
+//更新视频点赞数
+message UpdateFavoriteCountReq{
+  int64 videoId=1;
+  int64 number=2;
+}
+message UpdateFavoriteCountResp{
+}
+
+//更新视频评论数
+message UpdateCommentCountReq{
+  int64 videoId=1;
+  int64 number=2;
+}
+message UpdateCommentCountResp{
+
+}
+
+//获取视频列表
+message GetVideoListByIdsReq{
+  optional int64 userId=1;
+  repeated int64 videoIds=2;
+}
+
+message GetVideoListByIdsResp{
+  repeated Video videoList=1;
+}
+
 service video{
   //保存视频信息到数据库
   rpc SaveVideo(SaveVideoReq)returns(SaveVideoResp);
@@ -55,4 +82,13 @@ service video{
 
   //视频流
   rpc Feed(FeedReq)returns(FeedResp);
+
+  //更新视频点赞数
+  rpc UpdateFavoriteCount(UpdateFavoriteCountReq)returns(UpdateFavoriteCountResp);
+
+  //更新视频评论数
+  rpc UpdateCommentCount(UpdateCommentCountReq)returns(UpdateFavoriteCountResp);
+
+  //根据videoIds获取视频列表
+  rpc GetVideoListByIds(GetVideoListByIdsReq)returns(GetVideoListByIdsResp);
 }

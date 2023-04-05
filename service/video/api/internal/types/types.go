@@ -54,3 +54,53 @@ type FeedResp struct {
 	VideoList []Video `json:"video_list,omitempty"`
 	NextTime  int64   `json:"nextTime,omitempty"`
 }
+
+type Comment struct {
+	Id         int64  `json:"id"`
+	User       User   `json:"user""`
+	Content    string `json:"content"`
+	CreateDate string `json:"create_date"`
+}
+
+type CommentReq struct {
+	Token       string `form:"token" validate:"required"`
+	VideoId     int64  `form:"video_id" validate:"required,gte=0"`
+	ActionType  int64  `form:"action_type" validate:"required,gte=1,lte=2"`
+	CommentText string `form:"comment_text,optional"`
+	CommentId   int64  `form:"comment_id,optional"`
+}
+
+type CommentResp struct {
+	Status
+	Comment Comment `json:"comment,omitempty"`
+}
+
+type CommentsListReq struct {
+	Token   string `form:"token,optional"`
+	VideoId int64  `form:"video_id" validate:"required,gte=0"`
+}
+
+type CommentsListResp struct {
+	Status
+	CommentsList []Comment `json:"comment_list,omitempty"`
+}
+
+type LikeReq struct {
+	Token      string `form:"token" validate:"required"`
+	VideoId    int64  `form:"video_id" validate:"required,gte=0"`
+	ActionType int64  `form:"action_type" validate:"required,gte=1,lte=2"`
+}
+
+type LikeResp struct {
+	Status
+}
+
+type LikeListReq struct {
+	UserId int64  `form:"user_id" validate:"required,gte=0"`
+	Token  string `form:"token,optional"`
+}
+
+type LikeListResp struct {
+	Status
+	VideoList []Video `json:"video_list,omitempty"`
+}

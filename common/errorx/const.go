@@ -30,7 +30,7 @@ const (
 	ERRLIKE         = "赞操作错误"
 	ERRCOMMENT      = "评论操作错误"
 	ERRTIMEPARAM    = "时间转化错误"
-
-	ERRDB       = "数据库繁忙,请稍后再试"
-	ERRINTERNAL = "服务器开小差了，请稍后再试"
+	ERRVIDEOID      = "视频ID错误"
+	ERRDB           = "数据库繁忙,请稍后再试"
+	ERRINTERNAL     = "服务器开小差了，请稍后再试"
 )

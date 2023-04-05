@@ -7,10 +7,12 @@ import (
 
 type Config struct {
 	rest.RestConf
-	FileRPC  zrpc.RpcClientConf
-	VideoRPC zrpc.RpcClientConf
-	UserRPC  zrpc.RpcClientConf
-	JWTAuth  struct {
+	FileRPC    zrpc.RpcClientConf
+	VideoRPC   zrpc.RpcClientConf
+	UserRPC    zrpc.RpcClientConf
+	LikeRPC    zrpc.RpcClientConf
+	CommentRPC zrpc.RpcClientConf
+	JWTAuth    struct {
 		AccessSecret string
 	}
 	MaxVideoSize int64

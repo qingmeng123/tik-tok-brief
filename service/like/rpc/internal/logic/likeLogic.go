@@ -26,7 +26,7 @@ func NewLikeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LikeLogic {
 }
 
 // 赞操作
-func (l *LikeLogic) Like(in *pb.LikeReq) (*pb.LikeListResp, error) {
+func (l *LikeLogic) Like(in *pb.LikeReq) (*pb.LikeResp, error) {
 	like, err := l.svcCtx.LikeModel.FindLikeByUserIdVideoId(l.ctx, in.UserId, in.VideoId)
 	if err != nil && err != sqlx.ErrNotFound {
 		logx.Error("LikeModel FindLikeByUserIdVideoId err:", err)
@@ -42,7 +42,7 @@ func (l *LikeLogic) Like(in *pb.LikeReq) (*pb.LikeListResp, error) {
 			logx.Error(".LikeModel.Insert err:", err)
 			return nil, errorx.NewStatusDBErr()
 		}
-		return &pb.LikeListResp{}, nil
+		return &pb.LikeResp{}, nil
 	}
 
 	//取消点赞
@@ -50,10 +50,10 @@ func (l *LikeLogic) Like(in *pb.LikeReq) (*pb.LikeListResp, error) {
 		err = l.svcCtx.LikeModel.Delete(l.ctx, like.Id)
 		if err != nil {
 			logx.Error("LikeModel.Delete err:", err)
-			return &pb.LikeListResp{}, nil
+			return &pb.LikeResp{}, nil
 		}
 	}
 
 	//操作错误
-	return &pb.LikeListResp{}, errorx.NewParamErr(errorx.ERRLIKE)
+	return &pb.LikeResp{}, errorx.NewParamErr(errorx.ERRLIKE)
 }

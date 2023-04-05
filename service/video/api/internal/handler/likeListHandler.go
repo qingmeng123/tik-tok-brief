@@ -9,16 +9,16 @@ import (
 	"tik-tok-brief/service/video/api/internal/types"
 )
 
-func PublishVideoHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func likeListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.PublishReq
+		var req types.LikeListReq
 		if err := httpx.Parse(r, &req); err != nil {
 			response.ParseErr(r.Context(), w, err)
 			return
 		}
-		file := r.MultipartForm.File["data"][0]
-		l := logic.NewPublishVideoLogic(r.Context(), svcCtx, file)
-		resp, err := l.PublishVideo(&req)
+
+		l := logic.NewLikeListLogic(r.Context(), svcCtx)
+		resp, err := l.LikeList(&req)
 		response.Response(w, resp, err)
 	}
 }

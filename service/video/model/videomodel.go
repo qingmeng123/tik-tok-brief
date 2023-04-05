@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"strings"
 	"time"
 )
 
@@ -15,7 +16,10 @@ type (
 	// and implement the added methods in customVideoModel.
 	VideoModel interface {
 		videoModel
+		FindVideosByIds(ctx context.Context, ids []int64) ([]*Video, error)
 		FindListByUserId(ctx context.Context, userId int64) ([]*Video, error)
+		UpdateCommentCountByVideoId(ctx context.Context, videoId, number int64) error
+		UpdateFavoriteCountByVideoId(ctx context.Context, videoId, number int64) error
 		FindListByCTimeLimit(ctx context.Context, time time.Time, maxNum int) ([]*Video, error)
 	}
 
@@ -23,6 +27,36 @@ type (
 		*defaultVideoModel
 	}
 )
+
+func (m *defaultVideoModel) FindVideosByIds(ctx context.Context, ids []int64) ([]*Video, error) {
+	videos := make([]*Video, 0)
+	query := fmt.Sprintf("select * from %s where video_id in (%s)", m.table, strings.Trim(strings.Join(strings.Fields(fmt.Sprint(ids)), ","), "[]"))
+	err := m.QueryRowsNoCacheCtx(ctx, &videos, query)
+	if err != nil {
+		return nil, err
+	}
+	return videos, nil
+}
+
+func (m *defaultVideoModel) UpdateCommentCountByVideoId(ctx context.Context, videoId, number int64) error {
+	query := fmt.Sprintf("update %s set comment_count=comment_count+? where video_id=?", m.table)
+	_, err := m.ExecNoCacheCtx(ctx, query, videoId, number)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *defaultVideoModel) UpdateFavoriteCountByVideoId(ctx context.Context, videoId, number int64) error {
+	query := fmt.Sprintf("update %s set favorite_count=favorite_count+? where video_id=?", m.table)
+	_, err := m.ExecNoCacheCtx(ctx, query, videoId, number)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func (m *defaultVideoModel) FindListByCTimeLimit(ctx context.Context, time time.Time, maxNum int) ([]*Video, error) {
 	videos := make([]*Video, 0)

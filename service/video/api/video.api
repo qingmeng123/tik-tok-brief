@@ -71,6 +71,73 @@ type (
 	}
 )
 
+//``````````````````````互动``````````````````````````````
+
+// 评论实体
+type Comment {
+	Id         int64  `json:"id"`
+	User       User   `json:"user""`
+	Content    string `json:"content"`
+	CreateDate string `json:"create_date"`
+}
+
+// 评论或取消评论操作
+type (
+	// 评论操作请求体
+	CommentReq {
+		Token       string `form:"token" validate:"required"`
+		VideoId     int64  `form:"video_id" validate:"required,gte=0"`
+		ActionType  int64  `form:"action_type" validate:"required,gte=1,lte=2"`
+		CommentText string `form:"comment_text,optional"`
+		CommentId   int64  `form:"comment_id,optional"`
+	}
+	// 评论操作返回体
+	CommentResp {
+		Status
+		Comment Comment `json:"comment,omitempty"`
+	}
+)
+// 获取视频评论操作
+type (
+	// 获取视频评论操作请求体
+	CommentsListReq {
+		Token   string `form:"token,optional"`
+		VideoId int64  `form:"video_id" validate:"required,gte=0"`
+	}
+	// 获取视频评论操作返回体
+	CommentsListResp {
+		Status
+		CommentsList []Comment `json:"comment_list,omitempty"`
+	}
+)
+
+// 赞操作
+type (
+	// 赞操作请求体
+	LikeReq {
+		Token      string `form:"token" validate:"required"`
+		VideoId    int64  `form:"video_id" validate:"required,gte=0"`
+		ActionType int64  `form:"action_type" validate:"required,gte=1,lte=2"`
+	}
+	// 赞操作返回体
+	LikeResp {
+		Status
+	}
+)
+// 点赞视频列表
+type (
+	// 点赞视频列表请求体
+	LikeListReq {
+		UserId int64  `form:"user_id" validate:"required,gte=0"`
+		Token  string `form:"token,optional"`
+	}
+	// 点赞视频列表返回体
+	LikeListResp {
+		Status
+		VideoList []Video `json:"video_list,omitempty"`
+	}
+)
+
 @server(
 	prefix : douyin/publish
 	middleware : ParseFormMiddleware
@@ -99,4 +166,26 @@ service video-api{
 	@doc "获取视频流"
 	@handler feed
 	get / (FeedReq)returns(FeedResp)
+}
+
+@server(
+	prefix : douyin
+	middleware : JWTAuthMiddleware
+)
+service video-api {
+	@doc "评论操作"
+	@handler comment
+	post /comment/action (CommentReq) returns (CommentResp)
+	
+	@doc "获取视频评论"
+	@handler commentsList
+	get /comment/action (CommentsListReq) returns (CommentsListResp)
+	
+	@doc "点赞或取消点赞操作"
+	@handler like
+	post /favorite/action (LikeReq) returns (LikeResp)
+	
+	@doc "获取点赞视频"
+	@handler likeList
+	get /favorite/list (LikeListReq) returns (LikeListResp)
 }

@@ -18,126 +18,164 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// FollowClient is the client API for Follow service.
+// LikeClient is the client API for Like service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type FollowClient interface {
+type LikeClient interface {
 	//赞操作
-	Like(ctx context.Context, in *LikeReq, opts ...grpc.CallOption) (*LikeListResp, error)
+	Like(ctx context.Context, in *LikeReq, opts ...grpc.CallOption) (*LikeResp, error)
 	//获取点赞视频列表
 	LikeList(ctx context.Context, in *LikeListReq, opts ...grpc.CallOption) (*LikeListResp, error)
+	//获取UID是否对VID点赞
+	IsLike(ctx context.Context, in *IsLikeReq, opts ...grpc.CallOption) (*IsLikeResp, error)
 }
 
-type followClient struct {
+type likeClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewFollowClient(cc grpc.ClientConnInterface) FollowClient {
-	return &followClient{cc}
+func NewLikeClient(cc grpc.ClientConnInterface) LikeClient {
+	return &likeClient{cc}
 }
 
-func (c *followClient) Like(ctx context.Context, in *LikeReq, opts ...grpc.CallOption) (*LikeListResp, error) {
-	out := new(LikeListResp)
-	err := c.cc.Invoke(ctx, "/like.follow/Like", in, out, opts...)
+func (c *likeClient) Like(ctx context.Context, in *LikeReq, opts ...grpc.CallOption) (*LikeResp, error) {
+	out := new(LikeResp)
+	err := c.cc.Invoke(ctx, "/like.like/Like", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *followClient) LikeList(ctx context.Context, in *LikeListReq, opts ...grpc.CallOption) (*LikeListResp, error) {
+func (c *likeClient) LikeList(ctx context.Context, in *LikeListReq, opts ...grpc.CallOption) (*LikeListResp, error) {
 	out := new(LikeListResp)
-	err := c.cc.Invoke(ctx, "/like.follow/LikeList", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/like.like/LikeList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// FollowServer is the server API for Follow service.
-// All implementations must embed UnimplementedFollowServer
+func (c *likeClient) IsLike(ctx context.Context, in *IsLikeReq, opts ...grpc.CallOption) (*IsLikeResp, error) {
+	out := new(IsLikeResp)
+	err := c.cc.Invoke(ctx, "/like.like/IsLike", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// LikeServer is the server API for Like service.
+// All implementations must embed UnimplementedLikeServer
 // for forward compatibility
-type FollowServer interface {
+type LikeServer interface {
 	//赞操作
-	Like(context.Context, *LikeReq) (*LikeListResp, error)
+	Like(context.Context, *LikeReq) (*LikeResp, error)
 	//获取点赞视频列表
 	LikeList(context.Context, *LikeListReq) (*LikeListResp, error)
-	mustEmbedUnimplementedFollowServer()
+	//获取UID是否对VID点赞
+	IsLike(context.Context, *IsLikeReq) (*IsLikeResp, error)
+	mustEmbedUnimplementedLikeServer()
 }
 
-// UnimplementedFollowServer must be embedded to have forward compatible implementations.
-type UnimplementedFollowServer struct {
+// UnimplementedLikeServer must be embedded to have forward compatible implementations.
+type UnimplementedLikeServer struct {
 }
 
-func (UnimplementedFollowServer) Like(context.Context, *LikeReq) (*LikeListResp, error) {
+func (UnimplementedLikeServer) Like(context.Context, *LikeReq) (*LikeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Like not implemented")
 }
-func (UnimplementedFollowServer) LikeList(context.Context, *LikeListReq) (*LikeListResp, error) {
+func (UnimplementedLikeServer) LikeList(context.Context, *LikeListReq) (*LikeListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LikeList not implemented")
 }
-func (UnimplementedFollowServer) mustEmbedUnimplementedFollowServer() {}
+func (UnimplementedLikeServer) IsLike(context.Context, *IsLikeReq) (*IsLikeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsLike not implemented")
+}
+func (UnimplementedLikeServer) mustEmbedUnimplementedLikeServer() {}
 
-// UnsafeFollowServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to FollowServer will
+// UnsafeLikeServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LikeServer will
 // result in compilation errors.
-type UnsafeFollowServer interface {
-	mustEmbedUnimplementedFollowServer()
+type UnsafeLikeServer interface {
+	mustEmbedUnimplementedLikeServer()
 }
 
-func RegisterFollowServer(s grpc.ServiceRegistrar, srv FollowServer) {
-	s.RegisterService(&Follow_ServiceDesc, srv)
+func RegisterLikeServer(s grpc.ServiceRegistrar, srv LikeServer) {
+	s.RegisterService(&Like_ServiceDesc, srv)
 }
 
-func _Follow_Like_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Like_Like_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LikeReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FollowServer).Like(ctx, in)
+		return srv.(LikeServer).Like(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/like.follow/Like",
+		FullMethod: "/like.like/Like",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FollowServer).Like(ctx, req.(*LikeReq))
+		return srv.(LikeServer).Like(ctx, req.(*LikeReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Follow_LikeList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Like_LikeList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LikeListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FollowServer).LikeList(ctx, in)
+		return srv.(LikeServer).LikeList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/like.follow/LikeList",
+		FullMethod: "/like.like/LikeList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FollowServer).LikeList(ctx, req.(*LikeListReq))
+		return srv.(LikeServer).LikeList(ctx, req.(*LikeListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Follow_ServiceDesc is the grpc.ServiceDesc for Follow service.
+func _Like_IsLike_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsLikeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LikeServer).IsLike(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/like.like/IsLike",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LikeServer).IsLike(ctx, req.(*IsLikeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Like_ServiceDesc is the grpc.ServiceDesc for Like service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Follow_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "like.follow",
-	HandlerType: (*FollowServer)(nil),
+var Like_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "like.like",
+	HandlerType: (*LikeServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Like",
-			Handler:    _Follow_Like_Handler,
+			Handler:    _Like_Like_Handler,
 		},
 		{
 			MethodName: "LikeList",
-			Handler:    _Follow_LikeList_Handler,
+			Handler:    _Like_LikeList_Handler,
+		},
+		{
+			MethodName: "IsLike",
+			Handler:    _Like_IsLike_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

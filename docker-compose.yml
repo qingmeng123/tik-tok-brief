@@ -56,6 +56,8 @@ services:
       - tik-tok-redis
       - tik-tok-etcd
       - user-rpc
+      - follow-rpc
+      - chat-rpc
     networks:
       - tik-tok-net
 
@@ -72,6 +74,7 @@ services:
       - tik-tok-mysql
       - tik-tok-redis
       - tik-tok-etcd
+      - follow-rpc
     networks:
       - tik-tok-net
 
@@ -92,6 +95,8 @@ services:
       - user-rpc
       - video-rpc
       - file-rpc
+      - comment-rpc
+      - like-rpc
     networks:
       - tik-tok-net
 
@@ -108,6 +113,7 @@ services:
       - tik-tok-mysql
       - tik-tok-redis
       - tik-tok-etcd
+      - like-rpc
     networks:
       - tik-tok-net
 
@@ -129,7 +135,79 @@ services:
     networks:
       - tik-tok-net
 
+  #follow
+  follow-rpc:
+    build:
+      context: ./
+      dockerfile: service/follow/rpc/Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/follow/rpc/static:/app/static
+      - /home/project/data/tik_tok/logs/follow/rpc/logs/:/app/logs
+      - /home/project/data/tik_tok/follow/rpc/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+    networks:
+      - tik-tok-net
 
+  #chat
+  chat-rpc:
+    build:
+      context: ./
+      dockerfile: service/chat/rpc/Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/chat/rpc/static:/app/static
+      - /home/project/data/tik_tok/logs/chat/rpc/logs/:/app/logs
+      - /home/project/data/tik_tok/chat/rpc/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+    networks:
+      - tik-tok-net
+
+  #like
+  like-rpc:
+    build:
+      context: ./
+      dockerfile: service/like/rpc/Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/like/rpc/static:/app/static
+      - /home/project/data/tik_tok/logs/like/rpc/logs/:/app/logs
+      - /home/project/data/tik_tok/like/rpc/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+    networks:
+      - tik-tok-net
+
+  #like
+  comment-rpc:
+    build:
+      context: ./
+      dockerfile: service/comment/rpc/Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/comment/rpc/static:/app/static
+      - /home/project/data/tik_tok/logs/comment/rpc/logs/:/app/logs
+      - /home/project/data/tik_tok/comment/rpc/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+    networks:
+      - tik-tok-net
+
+  #nginx
   nginx-gateway:
     image: nginx
     restart: always

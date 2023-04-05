@@ -39,3 +39,21 @@ func (s *VideoServer) Feed(ctx context.Context, in *pb.FeedReq) (*pb.FeedResp, e
 	l := logic.NewFeedLogic(ctx, s.svcCtx)
 	return l.Feed(in)
 }
+
+// 更新视频点赞数
+func (s *VideoServer) UpdateFavoriteCount(ctx context.Context, in *pb.UpdateFavoriteCountReq) (*pb.UpdateFavoriteCountResp, error) {
+	l := logic.NewUpdateFavoriteCountLogic(ctx, s.svcCtx)
+	return l.UpdateFavoriteCount(in)
+}
+
+// 更新视频评论数
+func (s *VideoServer) UpdateCommentCount(ctx context.Context, in *pb.UpdateCommentCountReq) (*pb.UpdateFavoriteCountResp, error) {
+	l := logic.NewUpdateCommentCountLogic(ctx, s.svcCtx)
+	return l.UpdateCommentCount(in)
+}
+
+// 根据videoIds获取视频列表
+func (s *VideoServer) GetVideoListByIds(ctx context.Context, in *pb.GetVideoListByIdsReq) (*pb.GetVideoListByIdsResp, error) {
+	l := logic.NewGetVideoListByIdsLogic(ctx, s.svcCtx)
+	return l.GetVideoListByIds(in)
+}

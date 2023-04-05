@@ -29,6 +29,18 @@ UserRPC:
       - 127.0.0.1:2379
     Key: user.rpc
 
+LikeRPC:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: like.rpc
+
+CommentRPC:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: comment.rpc
+
 JWTAuth:
   AccessSecret: "长路漫漫,唯剑作伴"
 

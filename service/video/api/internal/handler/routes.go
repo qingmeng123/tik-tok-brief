@@ -51,4 +51,33 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		),
 		rest.WithPrefix("/douyin/feed"),
 	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.JWTAuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/comment/action",
+					Handler: commentHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/comment/action",
+					Handler: commentsListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/favorite/action",
+					Handler: likeHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/favorite/list",
+					Handler: likeListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/douyin"),
+	)
 }

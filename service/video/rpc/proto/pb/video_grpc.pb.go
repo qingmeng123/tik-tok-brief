@@ -28,6 +28,12 @@ type VideoClient interface {
 	PublishList(ctx context.Context, in *PublishListReq, opts ...grpc.CallOption) (*PublishListResp, error)
 	//视频流
 	Feed(ctx context.Context, in *FeedReq, opts ...grpc.CallOption) (*FeedResp, error)
+	//更新视频点赞数
+	UpdateFavoriteCount(ctx context.Context, in *UpdateFavoriteCountReq, opts ...grpc.CallOption) (*UpdateFavoriteCountResp, error)
+	//更新视频评论数
+	UpdateCommentCount(ctx context.Context, in *UpdateCommentCountReq, opts ...grpc.CallOption) (*UpdateFavoriteCountResp, error)
+	//根据videoIds获取视频列表
+	GetVideoListByIds(ctx context.Context, in *GetVideoListByIdsReq, opts ...grpc.CallOption) (*GetVideoListByIdsResp, error)
 }
 
 type videoClient struct {
@@ -65,6 +71,33 @@ func (c *videoClient) Feed(ctx context.Context, in *FeedReq, opts ...grpc.CallOp
 	return out, nil
 }
 
+func (c *videoClient) UpdateFavoriteCount(ctx context.Context, in *UpdateFavoriteCountReq, opts ...grpc.CallOption) (*UpdateFavoriteCountResp, error) {
+	out := new(UpdateFavoriteCountResp)
+	err := c.cc.Invoke(ctx, "/pb.video/UpdateFavoriteCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *videoClient) UpdateCommentCount(ctx context.Context, in *UpdateCommentCountReq, opts ...grpc.CallOption) (*UpdateFavoriteCountResp, error) {
+	out := new(UpdateFavoriteCountResp)
+	err := c.cc.Invoke(ctx, "/pb.video/UpdateCommentCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *videoClient) GetVideoListByIds(ctx context.Context, in *GetVideoListByIdsReq, opts ...grpc.CallOption) (*GetVideoListByIdsResp, error) {
+	out := new(GetVideoListByIdsResp)
+	err := c.cc.Invoke(ctx, "/pb.video/GetVideoListByIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VideoServer is the server API for Video service.
 // All implementations must embed UnimplementedVideoServer
 // for forward compatibility
@@ -75,6 +108,12 @@ type VideoServer interface {
 	PublishList(context.Context, *PublishListReq) (*PublishListResp, error)
 	//视频流
 	Feed(context.Context, *FeedReq) (*FeedResp, error)
+	//更新视频点赞数
+	UpdateFavoriteCount(context.Context, *UpdateFavoriteCountReq) (*UpdateFavoriteCountResp, error)
+	//更新视频评论数
+	UpdateCommentCount(context.Context, *UpdateCommentCountReq) (*UpdateFavoriteCountResp, error)
+	//根据videoIds获取视频列表
+	GetVideoListByIds(context.Context, *GetVideoListByIdsReq) (*GetVideoListByIdsResp, error)
 	mustEmbedUnimplementedVideoServer()
 }
 
@@ -90,6 +129,15 @@ func (UnimplementedVideoServer) PublishList(context.Context, *PublishListReq) (*
 }
 func (UnimplementedVideoServer) Feed(context.Context, *FeedReq) (*FeedResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Feed not implemented")
+}
+func (UnimplementedVideoServer) UpdateFavoriteCount(context.Context, *UpdateFavoriteCountReq) (*UpdateFavoriteCountResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateFavoriteCount not implemented")
+}
+func (UnimplementedVideoServer) UpdateCommentCount(context.Context, *UpdateCommentCountReq) (*UpdateFavoriteCountResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCommentCount not implemented")
+}
+func (UnimplementedVideoServer) GetVideoListByIds(context.Context, *GetVideoListByIdsReq) (*GetVideoListByIdsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVideoListByIds not implemented")
 }
 func (UnimplementedVideoServer) mustEmbedUnimplementedVideoServer() {}
 
@@ -158,6 +206,60 @@ func _Video_Feed_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Video_UpdateFavoriteCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateFavoriteCountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServer).UpdateFavoriteCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.video/UpdateFavoriteCount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServer).UpdateFavoriteCount(ctx, req.(*UpdateFavoriteCountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Video_UpdateCommentCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCommentCountReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServer).UpdateCommentCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.video/UpdateCommentCount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServer).UpdateCommentCount(ctx, req.(*UpdateCommentCountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Video_GetVideoListByIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetVideoListByIdsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VideoServer).GetVideoListByIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.video/GetVideoListByIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VideoServer).GetVideoListByIds(ctx, req.(*GetVideoListByIdsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Video_ServiceDesc is the grpc.ServiceDesc for Video service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +278,18 @@ var Video_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Feed",
 			Handler:    _Video_Feed_Handler,
+		},
+		{
+			MethodName: "UpdateFavoriteCount",
+			Handler:    _Video_UpdateFavoriteCount_Handler,
+		},
+		{
+			MethodName: "UpdateCommentCount",
+			Handler:    _Video_UpdateCommentCount_Handler,
+		},
+		{
+			MethodName: "GetVideoListByIds",
+			Handler:    _Video_GetVideoListByIds_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

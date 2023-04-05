@@ -27,9 +27,20 @@ message LikeListResp{
   repeated Like likes=1;
 }
 
-service follow{
+message IsLikeReq{
+  int64 userId=1;
+  int64 videoId=2;
+}
+message IsLikeResp{
+  bool isLike=1;
+}
+
+service like{
   //赞操作
-  rpc Like(LikeReq)returns(LikeListResp);
+  rpc Like(LikeReq)returns(LikeResp);
   //获取点赞视频列表
   rpc LikeList(LikeListReq)returns(LikeListResp);
+
+  //获取UID是否对VID点赞
+  rpc IsLike(IsLikeReq)returns(IsLikeResp);
 }
