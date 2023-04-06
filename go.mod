@@ -62,6 +62,7 @@ require (
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.37.0 // indirect
 	github.com/prometheus/procfs v0.8.0 // indirect
+	github.com/sony/sonyflake v1.1.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/u2takey/go-utils v0.3.1 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.7 // indirect

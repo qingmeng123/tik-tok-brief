@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
+	"tik-tok-brief/common/snowflake"
 	"tik-tok-brief/service/user/rpc/proto/pb"
 
 	"tik-tok-brief/service/user/rpc/internal/config"
@@ -24,7 +26,11 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-
+	err := snowflake.Init(c.MachineId)
+	if err != nil {
+		logx.Error("snowflake.Init err:", err)
+		return
+	}
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		pb.RegisterUserServer(grpcServer, server.NewUserServer(ctx))
 

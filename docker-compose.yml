@@ -108,7 +108,7 @@ services:
     networks:
       - tik-tok-net
 
-  #like
+  #comment
   comment-rpc:
     build:
       context: ./
@@ -217,6 +217,13 @@ services:
     networks:
       - tik-tok-net
     depends_on:
+      - file-rpc
+      - chat-rpc
+      - follow-rpc
+      - like-rpc
+      - comment-rpc
+      - user-rpc
+      - video-rpc
       - user-api
       - video-api
 

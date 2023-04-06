@@ -4,7 +4,7 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: video.rpc
-
+MachineId: 1
 Mysql:
   DataSource: root:@XUEHUI.@tcp(127.0.0.1:3306)/tik_tok_video?charset=utf8mb4&parseTime=true
 
