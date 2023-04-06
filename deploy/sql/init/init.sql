@@ -4,9 +4,15 @@ flush privileges;
 
 create database tik_tok_user default character set utf8mb4 collate utf8mb4_general_ci;
 create database tik_tok_video default character set utf8mb4 collate utf8mb4_general_ci;
+create database tik_tok_chat default character set utf8mb4 collate utf8mb4_general_ci;
+create database tik_tok_comment default character set utf8mb4 collate utf8mb4_general_ci;
+create database tik_tok_follow default character set utf8mb4 collate utf8mb4_general_ci;
+create database tik_tok_like default character set utf8mb4 collate utf8mb4_general_ci;
+
 
 
 use tik_tok_user;
+drop table if exists user;
 create table user
 (
     id               bigint auto_increment
@@ -14,16 +20,12 @@ create table user
     user_id          bigint                               not null,
     username         char(32)                             not null,
     password         varchar(100)                         not null,
-    name             varchar(50)                          null,
-    follow_count     bigint                               null,
-    follower_count   bigint                               null,
-    is_follow        tinyint(1) default 0                 null,
-    avatar           varchar(500)                         null,
-    background_image varchar(500)                         null,
-    signature        varchar(100)                         null,
-    total_favorited  bigint     default 0                 null,
-    work_count       bigint     default 0                 null,
-    favorite_count   bigint     default 0                 null,
+    follow_count     bigint     default 0                 not null,
+    follower_count   bigint     default 0                 not null,
+    is_follow        tinyint(1) default 0                 not null,
+    total_favorited  bigint     default 0                 not null,
+    work_count       bigint     default 0                 not null,
+    favorite_count   bigint     default 0                 not null,
     create_time      timestamp  default CURRENT_TIMESTAMP null,
     update_time      timestamp  default CURRENT_TIMESTAMP null,
     constraint user_user_id_uindex
@@ -31,6 +33,7 @@ create table user
     constraint user_username_uindex
         unique (username)
 );
+
 
 use tik_tok_video;
 CREATE TABLE `video`
@@ -49,3 +52,59 @@ CREATE TABLE `video`
     KEY              `idx_user_id` (`user_id`) USING BTREE,
     KEY              `idx_create_time` (`create_time`) USING BTREE
 )  CHARSET=utf8;
+
+use tik_tok_comment;
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment`
+(
+    `id`           int          NOT NULL UNIQUE AUTO_INCREMENT COMMENT 'id',
+    `user_id` int          NOT NULL COMMENT '发送用户id',
+    `video_id`   int          NOT NULL COMMENT '接收消息用户id',
+    `content`      varchar(300) NOT NULL,
+    `create_time`  timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+    `update_time`  timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,
+    PRIMARY KEY (`id`),
+    KEY `idx_video_id` (`video_id`)
+) CHARSET=utf8;
+
+use tik_tok_follow;
+DROP TABLE IF EXISTS `follow`;
+CREATE TABLE `follow`
+(
+    `id`          int        NOT NULL UNIQUE AUTO_INCREMENT COMMENT 'id',
+    `user_id`     int        NOT NULL COMMENT '关注用户id',
+    `to_user_id`  int        NOT NULL COMMENT '被关注用户id',
+    `is_friend`   tinyint(1) NOT NULL DEFAULT '0' COMMENT '0代表没有互相关注，1代表互相关注',
+    `create_time` timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_user_id` (`user_id`) USING BTREE,
+    KEY `idx_to_user_id` (`to_user_id`)
+) CHARSET=utf8;
+
+use tik_tok_like;
+DROP TABLE IF EXISTS `like`;
+CREATE TABLE `like`
+(
+    `id`          int        NOT NULL UNIQUE AUTO_INCREMENT COMMENT 'id',
+    `user_id`     int        NOT NULL COMMENT '用户id',
+    `video_id`  int        NOT NULL COMMENT '点赞视频id',
+    `create_time` timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_user_id` (`user_id`) USING BTREE
+) CHARSET=utf8;
+
+use tik_tok_chat;
+DROP TABLE IF EXISTS `chat`;
+CREATE TABLE `chat`
+(
+    `id`           int          NOT NULL UNIQUE AUTO_INCREMENT COMMENT 'id',
+    `from_user_id` int          NOT NULL COMMENT '发送用户id',
+    `to_user_id`   int          NOT NULL COMMENT '接收消息用户id',
+    `content`      varchar(300) NOT NULL,
+    `create_time`  timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+    `update_time`  timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,
+    PRIMARY KEY (`id`),
+    KEY `idx_chat` (`from_user_id`, `to_user_id`)
+) CHARSET=utf8;
