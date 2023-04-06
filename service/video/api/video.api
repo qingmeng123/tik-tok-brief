@@ -179,7 +179,7 @@ service video-api {
 	
 	@doc "获取视频评论"
 	@handler commentsList
-	get /comment/action (CommentsListReq) returns (CommentsListResp)
+	get /comment/list (CommentsListReq) returns (CommentsListResp)
 	
 	@doc "点赞或取消点赞操作"
 	@handler like

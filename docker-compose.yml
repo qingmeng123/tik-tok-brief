@@ -40,83 +40,6 @@ services:
     networks:
       - tik-tok-net
 
-
-  #user
-  user-api:
-    build:
-      context: ./
-      dockerfile: service/user/api/Dockerfile
-    environment:
-      TZ: Asia/Shanghai
-    volumes:
-      - /home/project/data/tik_tok/logs/user/api/logs/:/app/logs
-      - /home/project/data/tik_tok/user/api/etc:/app/etc
-    depends_on:
-      - tik-tok-mysql
-      - tik-tok-redis
-      - tik-tok-etcd
-      - user-rpc
-      - follow-rpc
-      - chat-rpc
-    networks:
-      - tik-tok-net
-
-  user-rpc:
-    build:
-      context: ./
-      dockerfile: service/user/rpc/Dockerfile
-    environment:
-      TZ: Asia/Shanghai
-    volumes:
-      - /home/project/data/tik_tok/logs/user/rpc/logs/:/app/logs
-      - /home/project/data/tik_tok/user/rpc/etc:/app/etc
-    depends_on:
-      - tik-tok-mysql
-      - tik-tok-redis
-      - tik-tok-etcd
-      - follow-rpc
-    networks:
-      - tik-tok-net
-
-  #video
-  video-api:
-    build:
-      context: ./
-      dockerfile: service/video/api/Dockerfile
-    environment:
-      TZ: Asia/Shanghai
-    volumes:
-      - /home/project/data/tik_tok/logs/video/api/logs/:/app/logs
-      - /home/project/data/tik_tok/video/api/etc:/app/etc
-    depends_on:
-      - tik-tok-mysql
-      - tik-tok-redis
-      - tik-tok-etcd
-      - user-rpc
-      - video-rpc
-      - file-rpc
-      - comment-rpc
-      - like-rpc
-    networks:
-      - tik-tok-net
-
-  video-rpc:
-    build:
-      context: ./
-      dockerfile: service/video/rpc/Dockerfile
-    environment:
-      TZ: Asia/Shanghai
-    volumes:
-      - /home/project/data/tik_tok/logs/video/rpc/logs/:/app/logs
-      - /home/project/data/tik_tok/video/rpc/etc:/app/etc
-    depends_on:
-      - tik-tok-mysql
-      - tik-tok-redis
-      - tik-tok-etcd
-      - like-rpc
-    networks:
-      - tik-tok-net
-
   #file
   file-rpc:
     build:
@@ -206,6 +129,88 @@ services:
       - tik-tok-etcd
     networks:
       - tik-tok-net
+
+  #user
+
+  user-rpc:
+    build:
+      context: ./
+      dockerfile: service/user/rpc/Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/logs/user/rpc/logs/:/app/logs
+      - /home/project/data/tik_tok/user/rpc/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+      - follow-rpc
+    networks:
+      - tik-tok-net
+
+  user-api:
+    build:
+      context: ./
+      dockerfile: service/user/api/Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/logs/user/api/logs/:/app/logs
+      - /home/project/data/tik_tok/user/api/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+      - user-rpc
+      - follow-rpc
+      - chat-rpc
+    networks:
+      - tik-tok-net
+
+
+  #video
+  video-rpc:
+    build:
+      context: ./
+      dockerfile: service/video/rpc/Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/logs/video/rpc/logs/:/app/logs
+      - /home/project/data/tik_tok/video/rpc/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+      - like-rpc
+    networks:
+      - tik-tok-net
+
+  video-api:
+    build:
+      context: ./
+      dockerfile: service/video/api/Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - /home/project/data/tik_tok/logs/video/api/logs/:/app/logs
+      - /home/project/data/tik_tok/video/api/etc:/app/etc
+    depends_on:
+      - tik-tok-mysql
+      - tik-tok-redis
+      - tik-tok-etcd
+      - user-rpc
+      - video-rpc
+      - file-rpc
+      - comment-rpc
+      - like-rpc
+    networks:
+      - tik-tok-net
+
+
+
+
 
   #nginx
   nginx-gateway:
