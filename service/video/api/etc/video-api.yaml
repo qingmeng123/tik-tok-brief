@@ -41,6 +41,12 @@ CommentRPC:
       - 127.0.0.1:2379
     Key: comment.rpc
 
+FollowRPC:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: follow.rpc
+
 JWTAuth:
   AccessSecret: "长路漫漫,唯剑作伴"
 

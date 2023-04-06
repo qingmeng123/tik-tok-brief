@@ -3,13 +3,13 @@ package logic
 import (
 	"context"
 	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 	"tik-tok-brief/common/errorx"
+	fpb "tik-tok-brief/service/follow/rpc/proto/pb"
 	userpb "tik-tok-brief/service/user/rpc/proto/pb"
 	"tik-tok-brief/service/video/api/internal/svc"
 	"tik-tok-brief/service/video/api/internal/types"
 	videopb "tik-tok-brief/service/video/rpc/proto/pb"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type PublishListLogic struct {
@@ -40,7 +40,15 @@ func (l *PublishListLogic) PublishList(req *types.PublishListReq) (resp *types.P
 
 	//是否关注
 	if tUserId != req.UserId {
-		userinfo.IsFollow = true
+		infoResp, err := l.svcCtx.FollowRPC.GetFollowInfo(l.ctx, &fpb.GetFollowInfoReq{
+			UserId:   tUserId,
+			ToUserId: req.UserId,
+		})
+		if err != nil {
+			logx.Error("FollowRPC.GetFollowInfo err:", err)
+			return nil, err
+		}
+		userinfo.IsFollow = infoResp.IsFollow
 	}
 
 	//获取用户视频

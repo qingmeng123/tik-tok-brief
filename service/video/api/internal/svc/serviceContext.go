@@ -5,6 +5,7 @@ import (
 	"github.com/zeromicro/go-zero/zrpc"
 	"tik-tok-brief/service/comment/rpc/comment"
 	"tik-tok-brief/service/file/rpc/file"
+	"tik-tok-brief/service/follow/rpc/follow"
 	"tik-tok-brief/service/like/rpc/like"
 	"tik-tok-brief/service/user/rpc/user"
 	"tik-tok-brief/service/video/api/internal/config"
@@ -22,6 +23,7 @@ type ServiceContext struct {
 	UserRPC                   user.UserZrpcClient
 	LikeRPC                   like.LikeZrpcClient
 	CommentRPC                comment.CommentZrpcClient
+	FollowRPC                 follow.FollowZrpcClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -35,5 +37,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserRPC:                   user.NewUserZrpcClient(zrpc.MustNewClient(c.UserRPC)),
 		LikeRPC:                   like.NewLikeZrpcClient(zrpc.MustNewClient(c.LikeRPC)),
 		CommentRPC:                comment.NewCommentZrpcClient(zrpc.MustNewClient(c.CommentRPC)),
+		FollowRPC:                 follow.NewFollowZrpcClient(zrpc.MustNewClient(c.FollowRPC)),
 	}
 }

@@ -12,6 +12,7 @@ type Config struct {
 	UserRPC    zrpc.RpcClientConf
 	LikeRPC    zrpc.RpcClientConf
 	CommentRPC zrpc.RpcClientConf
+	FollowRPC  zrpc.RpcClientConf
 	JWTAuth    struct {
 		AccessSecret string
 	}

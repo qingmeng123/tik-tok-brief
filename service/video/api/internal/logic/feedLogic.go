@@ -30,12 +30,8 @@ func NewFeedLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FeedLogic {
 
 func (l *FeedLogic) Feed(req *types.FeedReq) (resp *types.FeedResp, err error) {
 	// 是否登录,空值不能类型断言
-	vUserId := l.ctx.Value("user_id")
-	if vUserId == nil {
+	userId := l.ctx.Value("user_id")
 
-	} else {
-		//tUserId:=vUserId.(int64)
-	}
 	if req.LastTime == 0 {
 		req.LastTime = time.Now().Unix()
 	}
@@ -58,19 +54,68 @@ func (l *FeedLogic) Feed(req *types.FeedReq) (resp *types.FeedResp, err error) {
 	}
 
 	//获取各个视频的作者
-	for i, video := range feedResp.VideoList {
-		userResp, err := l.svcCtx.UserRPC.GetUser(l.ctx, &userpb.GetUserReq{UserID: video.UserId})
-		if err != nil {
-			logx.Error("userRPC_getUser err:", err)
-			return nil, err
-		}
-		err = copier.Copy(&resp.VideoList[i].Author, userResp.User)
-		if err != nil {
-			logx.Error("copier_copy err:", err)
-			return nil, errorx.NewInternalErr()
-		}
+	ids := make([]int64, len(feedResp.VideoList))
+	for i := 0; i < len(feedResp.VideoList); i++ {
+		ids[i] = feedResp.VideoList[i].UserId
 	}
 
+	//若登录还会获取关注和点赞信息
+	if userId != nil {
+		uid := userId.(int64)
+		userListByIdsResp, err := l.svcCtx.UserRPC.GetUserListByIds(l.ctx, &userpb.GetUserListByIdsReq{
+			UserId: &uid,
+			Ids:    ids,
+		})
+
+		if err != nil {
+			logx.Error("UserRPC.GetUserListByIds err:", err)
+			return nil, err
+		}
+
+		//点赞信息
+		vids := make([]int64, len(feedResp.VideoList))
+		for i := 0; i < len(vids); i++ {
+			vids[i] = feedResp.VideoList[i].VideoId
+		}
+		videoListByIdsResp, err := l.svcCtx.VideoRPC.GetVideoListByIds(l.ctx, &pb.GetVideoListByIdsReq{
+			UserId:   &uid,
+			VideoIds: vids,
+		})
+		if err != nil {
+			logx.Error("VideoRPC.GetVideoListByIds err:", err)
+			return nil, err
+		}
+		for i := 0; i < len(userListByIdsResp.Users); i++ {
+			//点赞信息
+			resp.VideoList[i].IsFavorite = videoListByIdsResp.VideoList[i].IsFavorite
+			//作者信息
+			err = copier.Copy(&(resp.VideoList[i].Author), userListByIdsResp.Users[i])
+			if err != nil {
+				logx.Error("copier.copy err:", err)
+				return nil, errorx.NewInternalErr()
+			}
+		}
+
+	} else {
+		//未登录
+		userListByIdsResp, err := l.svcCtx.UserRPC.GetUserListByIds(l.ctx, &userpb.GetUserListByIdsReq{
+			Ids: ids,
+		})
+
+		if err != nil {
+			logx.Error("UserRPC.GetUserListByIds err:", err)
+			return nil, err
+		}
+
+		for i := 0; i < len(userListByIdsResp.Users); i++ {
+			//作者信息
+			err = copier.Copy(&(resp.VideoList[i].Author), userListByIdsResp.Users[i])
+			if err != nil {
+				logx.Error("copier.copy err:", err)
+				return nil, errorx.NewInternalErr()
+			}
+		}
+	}
 	resp.StatusCode = errorx.OK
 	resp.StatusMsg = errorx.SUCCESS
 

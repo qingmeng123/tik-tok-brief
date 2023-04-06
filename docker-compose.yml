@@ -126,7 +126,6 @@ services:
       - tik-tok-net
 
   #user
-
   user-rpc:
     build:
       context: ./
@@ -203,10 +202,6 @@ services:
     networks:
       - tik-tok-net
 
-
-
-
-
   #nginx
   nginx-gateway:
     image: nginx
@@ -223,10 +218,7 @@ services:
       - tik-tok-net
     depends_on:
       - user-api
-      - user-rpc
       - video-api
-      - video-rpc
-      - file-rpc
 
 networks:
   tik-tok-net:

@@ -7,7 +7,7 @@ type Status struct {
 }
 
 type User struct {
-	UserID        int64  `json:"id"`
+	UserId        int64  `json:"id"`
 	UserName      string `json:"name"`
 	FollowCount   int64  `json:"follow_count"`
 	FollowerCount int64  `json:"follower_count"`
