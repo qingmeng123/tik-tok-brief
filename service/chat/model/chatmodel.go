@@ -46,8 +46,10 @@ func (m *defaultChatModel) FindChatLimitList(ctx context.Context, fromUserId, to
 
 func (m *defaultChatModel) FindChatList(ctx context.Context, fromUserId, toUserId int64) ([]*Chat, error) {
 	chats := make([]*Chat, 0)
-	query := fmt.Sprintf("select * from %s where from_user_id =? and to_user_id =? order by create_time desc", m.table)
-	err := m.QueryRowsNoCacheCtx(ctx, &chats, query, fromUserId, toUserId)
+	query := fmt.Sprintf("select * from %s where from_user_id =? and to_user_id =? "+
+		"union select * from %s where from_user_id=? and to_user_id =? "+
+		"order by create_time desc", m.table, m.table)
+	err := m.QueryRowsNoCacheCtx(ctx, &chats, query, fromUserId, toUserId, toUserId, fromUserId)
 	if err != nil {
 		return nil, err
 	}
