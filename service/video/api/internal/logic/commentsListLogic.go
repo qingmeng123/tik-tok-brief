@@ -52,12 +52,9 @@ func (l *CommentsListLogic) CommentsList(req *types.CommentsListReq) (resp *type
 		return nil, err
 	}
 	for i := 0; i < len(res); i++ {
-		err = copier.Copy(&(res[i].User), userListByIdsResp.Users[i])
-		if err != nil {
-			logx.Error("copier copy err:", err)
-			return nil, errorx.NewInternalErr()
-		}
+		res[i].User.UserId = listResp.Comments[i].UserId
 	}
+	SetCommentAuthorInfo(res, userListByIdsResp.Users)
 
 	return &types.CommentsListResp{
 		Status: types.Status{
@@ -66,4 +63,15 @@ func (l *CommentsListLogic) CommentsList(req *types.CommentsListReq) (resp *type
 		},
 		CommentsList: res,
 	}, nil
+}
+
+func SetCommentAuthorInfo(res []types.Comment, authors []*upb.User) {
+	for i := 0; i < len(res); i++ {
+		for j := 0; j < len(authors); j++ {
+			if authors[j].UserId == res[i].User.UserId {
+				_ = copier.Copy(&res[i].User, authors[j])
+				break
+			}
+		}
+	}
 }
