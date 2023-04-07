@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/copier"
 	"tik-tok-brief/common/errorx"
 	"tik-tok-brief/service/chat/rpc/proto/pb"
+	"time"
 
 	"tik-tok-brief/service/user/api/internal/svc"
 	"tik-tok-brief/service/user/api/internal/types"
@@ -39,6 +40,10 @@ func (l *HistoryMessageLogic) HistoryMessage(req *types.HistoryMessageReq) (resp
 	}
 	messages := make([]types.Message, len(messagesResp.MessageList))
 	_ = copier.Copy(&messages, messagesResp.MessageList)
+	for i, message := range messagesResp.MessageList {
+		t, _ := time.Parse("2006-01-02 15:04:05", message.CreateTime)
+		messages[i].CreateTime = t.Unix()
+	}
 	return &types.HistoryMessageResp{
 		StatusResponse: types.StatusResponse{
 			StatusCode: int32(errorx.OK),

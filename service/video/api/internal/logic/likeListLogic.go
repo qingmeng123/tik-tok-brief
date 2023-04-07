@@ -43,9 +43,9 @@ func (l *LikeListLogic) LikeList(req *types.LikeListReq) (resp *types.LikeListRe
 	for i, follow := range list.Likes {
 		ids[i] = follow.VideoId
 	}
-	//获取请求用户Id的点赞视频
+	//获取点赞视频的详细信息
 	videoListByIdsResp, err := l.svcCtx.VideoRPC.GetVideoListByIds(l.ctx, &vpb.GetVideoListByIdsReq{
-		UserId:   &req.UserId,
+		UserId:   &userId,
 		VideoIds: ids,
 	})
 	if err != nil {
@@ -53,13 +53,13 @@ func (l *LikeListLogic) LikeList(req *types.LikeListReq) (resp *types.LikeListRe
 		return nil, err
 	}
 
-	res := make([]types.Video, len(videoListByIdsResp.VideoList))
+	res := make([]types.Video, len(list.Likes))
 	_ = copier.Copy(&res, videoListByIdsResp.VideoList)
 
 	//获取视频作者
-	uids := make([]int64, len(res))
-	for i, video := range videoListByIdsResp.VideoList {
-		uids[i] = video.UserId
+	uids := make([]int64, len(list.Likes))
+	for i := 0; i < len(uids); i++ {
+		uids[i] = videoListByIdsResp.VideoList[i].UserId
 	}
 
 	userListByIdsResp, err := l.svcCtx.UserRPC.GetUserListByIds(l.ctx, &upb.GetUserListByIdsReq{
@@ -70,10 +70,11 @@ func (l *LikeListLogic) LikeList(req *types.LikeListReq) (resp *types.LikeListRe
 		logx.Error("UserRPC.GetUserListByIds err:", err)
 		return nil, err
 	}
-
 	for i := 0; i < len(res); i++ {
-		_ = copier.Copy(&(res[i].Author), userListByIdsResp.Users[i])
+		res[i].Author.UserId = videoListByIdsResp.VideoList[i].UserId
 	}
+
+	SetAuthorInfo(res, userListByIdsResp.Users)
 	return &types.LikeListResp{
 		Status: types.Status{
 			StatusCode: uint32(codes.OK),
@@ -81,4 +82,15 @@ func (l *LikeListLogic) LikeList(req *types.LikeListReq) (resp *types.LikeListRe
 		},
 		VideoList: res,
 	}, nil
+}
+
+func SetAuthorInfo(res []types.Video, authors []*upb.User) {
+	for i := 0; i < len(res); i++ {
+		for j := 0; j < len(authors); j++ {
+			if authors[j].UserId == res[i].Author.UserId {
+				_ = copier.Copy(&res[i].Author, authors[j])
+				break
+			}
+		}
+	}
 }
