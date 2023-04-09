@@ -39,49 +39,49 @@ scrape_configs:
           app: 'video-api'
           env: 'test'
 
-      - targets: [ 'user-api:9080' ]
+      - targets: ['user-api:9080']
           labels:
             # 自定义标签
             app: 'user-api'
             env: 'test'
 
-      - targets: [ 'user-rpc:9009' ]
+      - targets: ['user-rpc:9009']
           labels:
             # 自定义标签
             app: 'user-rpc'
             env: 'test'
 
-      - targets: [ 'video-rpc:9092' ]
+      - targets: ['video-rpc:9092']
           labels:
             # 自定义标签
             app: 'video-rpc'
             env: 'test'
 
-      - targets: [ 'like-rpc:9094' ]
+      - targets: ['like-rpc:9094']
           labels:
             # 自定义标签
             app: 'like-rpc'
             env: 'test'
 
-      - targets: [ 'follow-rpc:9093' ]
+      - targets: ['follow-rpc:9093']
           labels:
             # 自定义标签
             app: 'follow-rpc'
             env: 'test'
 
-      - targets: [ 'file-rpc:9091' ]
+      - targets: ['file-rpc:9091']
           labels:
             # 自定义标签
             app: 'file-rpc'
             env: 'test'
 
-      - targets: [ 'comment-rpc:9095' ]
+      - targets: ['comment-rpc:9095']
           labels:
             # 自定义标签
             app: 'comment-rpc'
             env: 'test'
 
-      - targets: [ 'chat-rpc:9096' ]
+      - targets: ['chat-rpc:9096']
           labels:
             # 自定义标签
             app: 'chat-rpc'
