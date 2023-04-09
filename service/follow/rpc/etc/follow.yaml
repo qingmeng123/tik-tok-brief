@@ -18,3 +18,8 @@ Log:
   Mode: "file"
   Level: "debug"
 
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9093
+  Path: /metrics

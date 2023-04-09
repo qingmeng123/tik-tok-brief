@@ -26,8 +26,8 @@ POST
 
 | 参数名   | 必选 | 请求类型 | 数据类型 | 说明   |
 | -------- | ---- | -------- | -------- | ------ |
-| username | 是   | query    | string   | 用户名 |
-| password | 是   | query    | string   | 密码   |
+| username | 是   | query    | string   | 用户名 最长32个字符|
+| password | 是   | query    | string   | 密码 最长32个字符  |
 
 **返回响应**
 

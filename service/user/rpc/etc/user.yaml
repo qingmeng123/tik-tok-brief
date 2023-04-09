@@ -29,3 +29,8 @@ FollowRPC:
     Hosts:
       - 127.0.0.1:2379
     Key: follow.rpc
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9009
+  Path: /metrics

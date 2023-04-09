@@ -16,3 +16,8 @@ Log:
   ServiceName: "like-rpc"
   Mode: "file"
   Level: "debug"
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9094
+  Path: /metrics
