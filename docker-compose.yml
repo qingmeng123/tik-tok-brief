@@ -234,7 +234,7 @@ services:
     environment:
       - TZ=${TZ}
     volumes:
-      - ./prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml  # 将 prometheus 配置文件挂载到容器里
+      - ./service/prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml  # 将 prometheus 配置文件挂载到容器里
     ports:
       - "9010:9090"                     # 设置容器9010端口映射指定宿主机端口，用于宿主机访问可视化web
     restart: always

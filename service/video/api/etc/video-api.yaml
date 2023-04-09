@@ -53,6 +53,6 @@ JWTAuth:
 MaxVideoSize: 52428800
 
 Prometheus:
-  Host: prometheus
+  Host: 0.0.0.0
   Port: 9081
   Path: /metrics

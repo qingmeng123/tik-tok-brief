@@ -3,7 +3,8 @@ global:
   scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
   evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
   # scrape_timeout is set to the global default (10s).
-
+  # 时区设置
+  time_zone: Asia/Shanghai
 # Alertmanager configuration
 alerting:
   alertmanagers:
@@ -29,7 +30,7 @@ scrape_configs:
       - targets: ["localhost:9090"]
 
   # 我们自己的项目配置
-  - job_name: 'video-api'
+  - job_name: 'tik-tok'
     static_configs:
       # 目标的采集地址
       - targets: ['video-api:9081']
@@ -37,4 +38,9 @@ scrape_configs:
           # 自定义标签
           app: 'video-api'
           env: 'test'
-          instance: 'video-api:8888'
+
+      - targets: [ 'user-api:9080' ]
+          labels:
+            # 自定义标签
+            app: 'video-api'
+            env: 'test'
