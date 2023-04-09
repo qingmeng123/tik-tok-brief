@@ -51,3 +51,8 @@ JWTAuth:
   AccessSecret: "长路漫漫,唯剑作伴"
 
 MaxVideoSize: 52428800
+
+Prometheus:
+  Host: prometheus
+  Port: 9081
+  Path: /metrics

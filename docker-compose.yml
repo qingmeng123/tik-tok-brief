@@ -190,6 +190,9 @@ services:
     volumes:
       - /home/project/data/tik_tok/logs/video/api/logs/:/app/logs
       - /home/project/data/tik_tok/video/api/etc:/app/etc
+    ports:
+      - "9081:9081"
+      - "8001:8001"
     depends_on:
       - tik-tok-mysql
       - tik-tok-redis
@@ -226,6 +229,19 @@ services:
       - video-rpc
       - user-api
       - video-api
+
+  #prometheus
+  prometheus:
+    image: bitnami/prometheus
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ./prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml  # 将 prometheus 配置文件挂载到容器里
+    ports:
+      - "9010:9090"                     # 设置容器9010端口映射指定宿主机端口，用于宿主机访问可视化web
+    restart: always
+    networks:
+      - tik-tok-net
 
 networks:
   tik-tok-net:
