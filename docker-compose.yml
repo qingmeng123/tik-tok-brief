@@ -190,9 +190,7 @@ services:
     volumes:
       - /home/project/data/tik_tok/logs/video/api/logs/:/app/logs
       - /home/project/data/tik_tok/video/api/etc:/app/etc
-    ports:
-      - "9081:9081"
-      - "8001:8001"
+
     depends_on:
       - tik-tok-mysql
       - tik-tok-redis
