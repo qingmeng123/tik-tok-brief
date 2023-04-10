@@ -241,7 +241,7 @@ services:
     networks:
       - tik-tok-net
 
-  #grafana //可视化监控管理
+  #grafana 可视化监控管理
   grafana:
     image: grafana/grafana
     environment:
@@ -252,6 +252,16 @@ services:
       - tik-tok-net
     restart: always
 
+  #jaeger 链路追踪
+  jaeger:
+    image: jaegertracing/all-in-one:1.28
+    environment:
+      - TZ=${TZ}
+    ports:
+      - "5000:16686"                        # 设置容器16686端口映射指定宿主机端口，用于宿主机访问可视化web
+    networks:
+      - tik-tok-net
+    restart: always
 networks:
   tik-tok-net:
     driver: bridge
