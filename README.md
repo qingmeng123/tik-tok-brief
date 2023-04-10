@@ -16,7 +16,7 @@
 - 使用`docker-compose build`将六个服务构建，再使用`docker-compose up -d`启动服务
 
 ## 接口文档
-见doc文件
+见resource文件夹
 
 ## 技术选型
 本项目采用基于`go-zero`的RPC框架，包含了`go-zero`以及相关`go-zero`作者开发的一些中间件，所用到的技术栈基本是`go-zero`
@@ -34,7 +34,7 @@
 - "github.com/jinzhu/copier v0.3.5"
 
 ## 调用关系
-![](doc/img.png)
+![](resource/img.png)
 不同的请求通过nginx反向代理到不同的api服务中，api调用多个rpc服务，rpc连接各自的数据库，雪花算法生成id便于分库分表
 
 ## 目录结构

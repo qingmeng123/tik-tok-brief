@@ -228,7 +228,7 @@ services:
       - user-api
       - video-api
 
-  #prometheus
+  #prometheus //服务监控
   prometheus:
     image: bitnami/prometheus
     environment:
@@ -240,6 +240,17 @@ services:
     restart: always
     networks:
       - tik-tok-net
+
+  #grafana //可视化监控管理
+  grafana:
+    image: grafana/grafana
+    environment:
+      - TZ=${TZ}
+    ports:
+      - "4000:3000"                        # 设置容器3000端口映射指定宿主机端口，用于宿主机访问可视化web
+    networks:
+      - tik-tok-net
+    restart: always
 
 networks:
   tik-tok-net:
