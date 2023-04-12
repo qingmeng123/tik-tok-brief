@@ -13,6 +13,8 @@ import (
 )
 
 type (
+	FollowTxnReq                = pb.FollowTxnReq
+	FollowTxnResp               = pb.FollowTxnResp
 	GenerateTokenReq            = pb.GenerateTokenReq
 	GenerateTokenResp           = pb.GenerateTokenResp
 	GetUserListByIdsReq         = pb.GetUserListByIdsReq
@@ -48,6 +50,10 @@ type (
 		UpdateUserFollowCount(ctx context.Context, in *UpdateUserFollowCountReq, opts ...grpc.CallOption) (*UpdateUserFollowCountResp, error)
 		// 更新用户作品数
 		UpdateUserWorkCount(ctx context.Context, in *UpdateUserWorkCountReq, opts ...grpc.CallOption) (*UpdateUserWorkCountResp, error)
+		// 关注操作（事务处理）
+		FollowTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error)
+		// 关注操作回滚（事务处理）
+		FollowRevertTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error)
 	}
 
 	defaultUserZrpcClient struct {
@@ -107,4 +113,16 @@ func (m *defaultUserZrpcClient) UpdateUserFollowCount(ctx context.Context, in *U
 func (m *defaultUserZrpcClient) UpdateUserWorkCount(ctx context.Context, in *UpdateUserWorkCountReq, opts ...grpc.CallOption) (*UpdateUserWorkCountResp, error) {
 	client := pb.NewUserClient(m.cli.Conn())
 	return client.UpdateUserWorkCount(ctx, in, opts...)
+}
+
+// 关注操作（事务处理）
+func (m *defaultUserZrpcClient) FollowTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error) {
+	client := pb.NewUserClient(m.cli.Conn())
+	return client.FollowTxn(ctx, in, opts...)
+}
+
+// 关注操作回滚（事务处理）
+func (m *defaultUserZrpcClient) FollowRevertTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error) {
+	client := pb.NewUserClient(m.cli.Conn())
+	return client.FollowRevertTxn(ctx, in, opts...)
 }

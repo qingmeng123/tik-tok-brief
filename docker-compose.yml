@@ -262,6 +262,25 @@ services:
     networks:
       - tik-tok-net
     restart: always
+
+  ##dtm
+  dtm:
+    image: yedf/dtm
+    environment:
+      - TZ=${TZ}
+    entrypoint:
+      - "/app/dtm/dtm"
+      - "-c=/app/dtm/configs/config.yaml"
+    volumes:
+      - ./service/dtm/config.yml:/app/dtm/configs/config.yaml # 将 dtm 配置文件挂载到容器里
+    ports:
+      - "6000:36789"
+      - "6001:36790"
+    networks:
+      - tik-tok-net
+    restart: always
+
 networks:
   tik-tok-net:
     driver: bridge
+

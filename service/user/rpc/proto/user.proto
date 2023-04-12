@@ -89,6 +89,14 @@ message UpdateUserWorkCountReq{
 }
 message UpdateUserWorkCountResp{}
 
+message FollowTxnReq{
+  int64 userId=1;
+  int64 toUserId=2;
+  int32 actionType=3;
+}
+
+message FollowTxnResp{}
+
 service user{
   //用户注册
   rpc Register(RegisterReq)returns(RegisterResp);
@@ -111,4 +119,9 @@ service user{
   rpc UpdateUserFollowCount(UpdateUserFollowCountReq)returns(UpdateUserFollowCountResp);
   //更新用户作品数
   rpc UpdateUserWorkCount(UpdateUserWorkCountReq)returns(UpdateUserWorkCountResp);
+
+  //关注操作（事务处理）
+  rpc FollowTxn(FollowTxnReq)returns(FollowTxnResp);
+  //关注操作回滚（事务处理）
+  rpc FollowRevertTxn(FollowTxnReq)returns(FollowTxnResp);
 }

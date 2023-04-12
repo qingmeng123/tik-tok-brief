@@ -57,3 +57,15 @@ func (s *FollowServer) GetFriendsList(ctx context.Context, in *pb.GetFriendsList
 	l := logic.NewGetFriendsListLogic(ctx, s.svcCtx)
 	return l.GetFriendsList(in)
 }
+
+// 关注操作（事务处理）
+func (s *FollowServer) FollowTxn(ctx context.Context, in *pb.FollowTxnReq) (*pb.FollowTxnResp, error) {
+	l := logic.NewFollowTxnLogic(ctx, s.svcCtx)
+	return l.FollowTxn(in)
+}
+
+// 关注操作失败反馈
+func (s *FollowServer) FollowTxnRevert(ctx context.Context, in *pb.FollowTxnReq) (*pb.FollowTxnResp, error) {
+	l := logic.NewFollowTxnRevertLogic(ctx, s.svcCtx)
+	return l.FollowTxnRevert(in)
+}

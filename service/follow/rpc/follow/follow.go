@@ -16,6 +16,8 @@ type (
 	Follow                    = pb.Follow
 	FollowReq                 = pb.FollowReq
 	FollowResp                = pb.FollowResp
+	FollowTxnReq              = pb.FollowTxnReq
+	FollowTxnResp             = pb.FollowTxnResp
 	GetFansListByUserIdReq    = pb.GetFansListByUserIdReq
 	GetFansListByUserIdResp   = pb.GetFansListByUserIdResp
 	GetFollowInfoReq          = pb.GetFollowInfoReq
@@ -40,6 +42,10 @@ type (
 		UnFollow(ctx context.Context, in *UnFollowReq, opts ...grpc.CallOption) (*UnFollowResp, error)
 		// 获取好友列表
 		GetFriendsList(ctx context.Context, in *GetFriendsListReq, opts ...grpc.CallOption) (*GetFriendsListResp, error)
+		// 关注操作（事务处理）
+		FollowTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error)
+		// 关注操作失败反馈
+		FollowTxnRevert(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error)
 	}
 
 	defaultFollowZrpcClient struct {
@@ -87,4 +93,16 @@ func (m *defaultFollowZrpcClient) UnFollow(ctx context.Context, in *UnFollowReq,
 func (m *defaultFollowZrpcClient) GetFriendsList(ctx context.Context, in *GetFriendsListReq, opts ...grpc.CallOption) (*GetFriendsListResp, error) {
 	client := pb.NewFollowClient(m.cli.Conn())
 	return client.GetFriendsList(ctx, in, opts...)
+}
+
+// 关注操作（事务处理）
+func (m *defaultFollowZrpcClient) FollowTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error) {
+	client := pb.NewFollowClient(m.cli.Conn())
+	return client.FollowTxn(ctx, in, opts...)
+}
+
+// 关注操作失败反馈
+func (m *defaultFollowZrpcClient) FollowTxnRevert(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error) {
+	client := pb.NewFollowClient(m.cli.Conn())
+	return client.FollowTxnRevert(ctx, in, opts...)
 }

@@ -34,6 +34,10 @@ type FollowClient interface {
 	UnFollow(ctx context.Context, in *UnFollowReq, opts ...grpc.CallOption) (*UnFollowResp, error)
 	// 获取好友列表
 	GetFriendsList(ctx context.Context, in *GetFriendsListReq, opts ...grpc.CallOption) (*GetFriendsListResp, error)
+	//关注操作（事务处理）
+	FollowTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error)
+	//关注操作失败反馈
+	FollowTxnRevert(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error)
 }
 
 type followClient struct {
@@ -98,6 +102,24 @@ func (c *followClient) GetFriendsList(ctx context.Context, in *GetFriendsListReq
 	return out, nil
 }
 
+func (c *followClient) FollowTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error) {
+	out := new(FollowTxnResp)
+	err := c.cc.Invoke(ctx, "/follow.follow/FollowTxn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *followClient) FollowTxnRevert(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error) {
+	out := new(FollowTxnResp)
+	err := c.cc.Invoke(ctx, "/follow.follow/FollowTxnRevert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FollowServer is the server API for Follow service.
 // All implementations must embed UnimplementedFollowServer
 // for forward compatibility
@@ -114,6 +136,10 @@ type FollowServer interface {
 	UnFollow(context.Context, *UnFollowReq) (*UnFollowResp, error)
 	// 获取好友列表
 	GetFriendsList(context.Context, *GetFriendsListReq) (*GetFriendsListResp, error)
+	//关注操作（事务处理）
+	FollowTxn(context.Context, *FollowTxnReq) (*FollowTxnResp, error)
+	//关注操作失败反馈
+	FollowTxnRevert(context.Context, *FollowTxnReq) (*FollowTxnResp, error)
 	mustEmbedUnimplementedFollowServer()
 }
 
@@ -138,6 +164,12 @@ func (UnimplementedFollowServer) UnFollow(context.Context, *UnFollowReq) (*UnFol
 }
 func (UnimplementedFollowServer) GetFriendsList(context.Context, *GetFriendsListReq) (*GetFriendsListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFriendsList not implemented")
+}
+func (UnimplementedFollowServer) FollowTxn(context.Context, *FollowTxnReq) (*FollowTxnResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FollowTxn not implemented")
+}
+func (UnimplementedFollowServer) FollowTxnRevert(context.Context, *FollowTxnReq) (*FollowTxnResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FollowTxnRevert not implemented")
 }
 func (UnimplementedFollowServer) mustEmbedUnimplementedFollowServer() {}
 
@@ -260,6 +292,42 @@ func _Follow_GetFriendsList_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Follow_FollowTxn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowTxnReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FollowServer).FollowTxn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/follow.follow/FollowTxn",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FollowServer).FollowTxn(ctx, req.(*FollowTxnReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Follow_FollowTxnRevert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowTxnReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FollowServer).FollowTxnRevert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/follow.follow/FollowTxnRevert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FollowServer).FollowTxnRevert(ctx, req.(*FollowTxnReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Follow_ServiceDesc is the grpc.ServiceDesc for Follow service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -290,6 +358,14 @@ var Follow_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFriendsList",
 			Handler:    _Follow_GetFriendsList_Handler,
+		},
+		{
+			MethodName: "FollowTxn",
+			Handler:    _Follow_FollowTxn_Handler,
+		},
+		{
+			MethodName: "FollowTxnRevert",
+			Handler:    _Follow_FollowTxnRevert_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

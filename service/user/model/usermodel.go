@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -19,12 +20,30 @@ type (
 		UpdateFollowCountByUserId(ctx context.Context, userId, number int64) error
 		UpdateFollowerCountByUserId(ctx context.Context, userId, number int64) error
 		UpdateWorkCountByUserId(ctx context.Context, userId, number int64) error
+		TxUpdateFollowCount(tx *sql.Tx, userId, number int64) (sql.Result, error)
+		TxUpdateFollowerCount(tx *sql.Tx, userId, number int64) (sql.Result, error)
 	}
 
 	customUserModel struct {
 		*defaultUserModel
 	}
 )
+
+func (m *defaultUserModel) TxUpdateFollowerCount(tx *sql.Tx, userId, number int64) (sql.Result, error) {
+	userIdKey := fmt.Sprintf("%s%v", cacheTikTokUserUserUserIdPrefix, userId)
+	return m.Exec(func(conn sqlx.SqlConn) (sql.Result, error) {
+		query := fmt.Sprintf("update %s set follower_count=follower_count+? where user_id=?", m.table)
+		return tx.Exec(query, number, userId)
+	}, userIdKey)
+}
+
+func (m *defaultUserModel) TxUpdateFollowCount(tx *sql.Tx, userId, number int64) (sql.Result, error) {
+	userIdKey := fmt.Sprintf("%s%v", cacheTikTokUserUserUserIdPrefix, userId)
+	return m.Exec(func(conn sqlx.SqlConn) (sql.Result, error) {
+		query := fmt.Sprintf("update %s set follow_count=follow_count+? where user_id=?", m.table)
+		return tx.Exec(query, number, userId)
+	}, userIdKey)
+}
 
 func (m *defaultUserModel) UpdateFollowCountByUserId(ctx context.Context, userId, number int64) error {
 	query := fmt.Sprintf("update %s set follow_count=follow_count+? where user_id=?", m.table)

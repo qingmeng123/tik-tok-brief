@@ -3,12 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	_ "github.com/dtm-labs/driver-gozero"
+	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/rest"
 	"tik-tok-brief/service/user/api/internal/config"
 	"tik-tok-brief/service/user/api/internal/handler"
 	"tik-tok-brief/service/user/api/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/conf"
-	"github.com/zeromicro/go-zero/rest"
 )
 
 var configFile = flag.String("f", "etc/user-api.yaml", "the config file")

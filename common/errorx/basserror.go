@@ -14,16 +14,15 @@ import (
 
 // CodeError 自定义错误
 type CodeError struct {
-	Code uint32   `json:"code"`
+	Code uint32 `json:"code"`
 	Msg  string `json:"msg"`
 }
 
 // CodeErrorResponse 自定义的错误响应
 type CodeErrorResponse struct {
-	StatusCode int32    `json:"status_code"`
+	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg"`
 }
-
 
 // Error CodeError实现error接口
 func (e CodeError) Error() string {
@@ -38,12 +37,10 @@ func (e CodeError) ResponseData() *CodeErrorResponse {
 	}
 }
 
-
-
 //-----------返回给前端的错误--------------
 
 // NewParamErr 参数错误
-func NewParamErr(msg string)CodeError{
+func NewParamErr(msg string) CodeError {
 	return CodeError{
 		Code: ParamErrCode,
 		Msg:  msg,
@@ -58,16 +55,22 @@ func NewInternalErr() CodeError {
 	}
 }
 
-
 //-------------rpc服务相互调用返回的错误--------------
 
-//NewStatusParamErr rpc返回的参数错误
+// NewStatusParamErr rpc返回的参数错误
 func NewStatusParamErr(msg string) error {
-	return status.Error(codes.Code(ParamErrCode),msg)
+	return status.Error(codes.Code(ParamErrCode), msg)
 }
 
-//NewStatusDBErr rpc返回的数据库错误
+// NewStatusDBErr rpc返回的数据库错误
 func NewStatusDBErr() error {
-	return status.Error(codes.Code(DBErrCode),ERRDB)
+	return status.Error(codes.Code(DBErrCode), ERRDB)
 }
 
+func NewStatusTxErr() error {
+	return status.Error(codes.Aborted, ERRINTERNAL)
+}
+
+func NewStatusParamTxErr(msg string) error {
+	return status.Error(codes.Aborted, msg)
+}

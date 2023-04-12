@@ -27,9 +27,9 @@ func NewUnFollowLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UnFollow
 // 取消关注
 func (l *UnFollowLogic) UnFollow(in *pb.UnFollowReq) (*pb.UnFollowResp, error) {
 	//检查是否关注对方
-	follow, err := l.svcCtx.FollowModel.FindIsFriendByUsersId(l.ctx, in.UserId, in.ToUserId)
+	follow, err := l.svcCtx.FollowModel.FindFollowByUsersId(l.ctx, in.UserId, in.ToUserId)
 	if err != nil && err != sqlx.ErrNotFound {
-		logx.Error("FollowModel.FindIsFriendByUsersId err:", err)
+		logx.Error("FollowModel.FindFollowByUsersId err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
 
@@ -46,9 +46,9 @@ func (l *UnFollowLogic) UnFollow(in *pb.UnFollowReq) (*pb.UnFollowResp, error) {
 	}
 
 	//查看对方是否关注自己
-	follower, err := l.svcCtx.FollowModel.FindIsFriendByUsersId(l.ctx, in.ToUserId, in.UserId)
+	follower, err := l.svcCtx.FollowModel.FindFollowByUsersId(l.ctx, in.ToUserId, in.UserId)
 	if err != nil && err != sqlx.ErrNotFound {
-		logx.Error("FollowModel.FindIsFriendByUsersId err:", err)
+		logx.Error("FollowModel.FindFollowByUsersId err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
 

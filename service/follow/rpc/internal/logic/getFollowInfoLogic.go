@@ -27,9 +27,9 @@ func NewGetFollowInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 // 获取关注信息
 func (l *GetFollowInfoLogic) GetFollowInfo(in *pb.GetFollowInfoReq) (*pb.GetFollowInfoResp, error) {
-	follow, err := l.svcCtx.FollowModel.FindIsFriendByUsersId(l.ctx, in.UserId, in.ToUserId)
+	follow, err := l.svcCtx.FollowModel.FindFollowByUsersId(l.ctx, in.UserId, in.ToUserId)
 	if err != nil && err != sqlx.ErrNotFound {
-		logx.Error("FollowModel.FindIsFriendByUsersId err:", err)
+		logx.Error("FollowModel.FindFollowByUsersId err:", err)
 		return nil, errorx.NewStatusDBErr()
 	}
 

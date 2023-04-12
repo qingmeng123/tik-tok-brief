@@ -38,6 +38,10 @@ type UserClient interface {
 	UpdateUserFollowCount(ctx context.Context, in *UpdateUserFollowCountReq, opts ...grpc.CallOption) (*UpdateUserFollowCountResp, error)
 	//更新用户作品数
 	UpdateUserWorkCount(ctx context.Context, in *UpdateUserWorkCountReq, opts ...grpc.CallOption) (*UpdateUserWorkCountResp, error)
+	//关注操作（事务处理）
+	FollowTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error)
+	//关注操作回滚（事务处理）
+	FollowRevertTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error)
 }
 
 type userClient struct {
@@ -120,6 +124,24 @@ func (c *userClient) UpdateUserWorkCount(ctx context.Context, in *UpdateUserWork
 	return out, nil
 }
 
+func (c *userClient) FollowTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error) {
+	out := new(FollowTxnResp)
+	err := c.cc.Invoke(ctx, "/user.user/FollowTxn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) FollowRevertTxn(ctx context.Context, in *FollowTxnReq, opts ...grpc.CallOption) (*FollowTxnResp, error) {
+	out := new(FollowTxnResp)
+	err := c.cc.Invoke(ctx, "/user.user/FollowRevertTxn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -140,6 +162,10 @@ type UserServer interface {
 	UpdateUserFollowCount(context.Context, *UpdateUserFollowCountReq) (*UpdateUserFollowCountResp, error)
 	//更新用户作品数
 	UpdateUserWorkCount(context.Context, *UpdateUserWorkCountReq) (*UpdateUserWorkCountResp, error)
+	//关注操作（事务处理）
+	FollowTxn(context.Context, *FollowTxnReq) (*FollowTxnResp, error)
+	//关注操作回滚（事务处理）
+	FollowRevertTxn(context.Context, *FollowTxnReq) (*FollowTxnResp, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -170,6 +196,12 @@ func (UnimplementedUserServer) UpdateUserFollowCount(context.Context, *UpdateUse
 }
 func (UnimplementedUserServer) UpdateUserWorkCount(context.Context, *UpdateUserWorkCountReq) (*UpdateUserWorkCountResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserWorkCount not implemented")
+}
+func (UnimplementedUserServer) FollowTxn(context.Context, *FollowTxnReq) (*FollowTxnResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FollowTxn not implemented")
+}
+func (UnimplementedUserServer) FollowRevertTxn(context.Context, *FollowTxnReq) (*FollowTxnResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FollowRevertTxn not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -328,6 +360,42 @@ func _User_UpdateUserWorkCount_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_FollowTxn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowTxnReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).FollowTxn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.user/FollowTxn",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).FollowTxn(ctx, req.(*FollowTxnReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_FollowRevertTxn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowTxnReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).FollowRevertTxn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.user/FollowRevertTxn",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).FollowRevertTxn(ctx, req.(*FollowTxnReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -366,6 +434,14 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserWorkCount",
 			Handler:    _User_UpdateUserWorkCount_Handler,
+		},
+		{
+			MethodName: "FollowTxn",
+			Handler:    _User_FollowTxn_Handler,
+		},
+		{
+			MethodName: "FollowRevertTxn",
+			Handler:    _User_FollowRevertTxn_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

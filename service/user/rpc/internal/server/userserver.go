@@ -69,3 +69,15 @@ func (s *UserServer) UpdateUserWorkCount(ctx context.Context, in *pb.UpdateUserW
 	l := logic.NewUpdateUserWorkCountLogic(ctx, s.svcCtx)
 	return l.UpdateUserWorkCount(in)
 }
+
+// 关注操作（事务处理）
+func (s *UserServer) FollowTxn(ctx context.Context, in *pb.FollowTxnReq) (*pb.FollowTxnResp, error) {
+	l := logic.NewFollowTxnLogic(ctx, s.svcCtx)
+	return l.FollowTxn(in)
+}
+
+// 关注操作回滚（事务处理）
+func (s *UserServer) FollowRevertTxn(ctx context.Context, in *pb.FollowTxnReq) (*pb.FollowTxnResp, error) {
+	l := logic.NewFollowRevertTxnLogic(ctx, s.svcCtx)
+	return l.FollowRevertTxn(in)
+}

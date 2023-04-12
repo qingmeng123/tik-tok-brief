@@ -62,6 +62,16 @@ message GetFriendsListResp{
   repeated Follow follows = 1;
 }
 
+//事务处理关注操作消息体
+message FollowTxnReq{
+  int64 userId = 1;
+  int64 toUserId = 2;
+  int32 actionType=3;
+}
+message FollowTxnResp{
+}
+
+
 service follow{
   //  获取关注信息
   rpc GetFollowInfo(GetFollowInfoReq) returns(GetFollowInfoResp);
@@ -75,4 +85,9 @@ service follow{
   rpc UnFollow(UnFollowReq) returns(UnFollowResp);
   // 获取好友列表
   rpc GetFriendsList(GetFriendsListReq) returns(GetFriendsListResp);
+
+  //关注操作（事务处理）
+  rpc FollowTxn(FollowTxnReq)returns(FollowTxnResp);
+  //关注操作失败回滚
+  rpc FollowTxnRevert(FollowTxnReq)returns(FollowTxnResp);
 }
