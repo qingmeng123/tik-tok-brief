@@ -34,10 +34,10 @@ func (l *FollowRevertTxnLogic) FollowRevertTxn(in *pb.FollowTxnReq) (*pb.FollowT
 	users, err := l.svcCtx.UserModel.FindUserByIds(l.ctx, ids)
 	if err != nil {
 		logx.Error("UserModel.FindUserByIds err:", err)
-		return nil, errorx.NewStatusDBErr()
+		return nil, errorx.NewStatusTxErr()
 	}
 	if len(users) != 2 || (in.ActionType != 1 && in.ActionType != 2) {
-		return nil, errorx.NewStatusParamErr(errorx.ERRUSERID)
+		return nil, errorx.NewStatusParamTxErr(errorx.ERRUSERID)
 	}
 
 	// 获取RawDB
