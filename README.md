@@ -18,40 +18,48 @@
 ## 接口文档
 见resource文件夹
 
-## 技术选型
+## 主要技术
 本项目采用基于`go-zero`的RPC框架，包含了`go-zero`以及相关`go-zero`作者开发的一些中间件，所用到的技术栈基本是`go-zero`
 项目组的自研组件。
-
 - Go-zero
 - Mysql
 - Redis
-- COS
 - grpc
 
 ### 其他组件
-- "github.com/sony/sonyflake"
-- "github.com/u2takey/ffmpeg-go v0.4.1"
-- "github.com/jinzhu/copier v0.3.5"
+- COS
+- nginx
+- prometheus
+- grafana
+- DTM
+- jaeger
+- logx
+- golang-jwt
+- sonyflake
+- ffmpeg-go
+- jinzhu/copier 
 
 ## 调用关系
 ![](resource/img.png)
-不同的请求通过nginx反向代理到不同的api服务中，api调用多个rpc服务，rpc连接各自的数据库，雪花算法生成id便于分库分表
+不同的请求通过nginx反向代理到不同的api服务中，api调用多个rpc服务，rpc连接各自的数据库，雪花算法生成id便于分库分表。
+采用DTM SAGA事务模式对api对多个微服务进行分布式事务处理，保证数据一致性。
 
 ## 目录结构
 ```
-├─common
+
+├─common    //公用包
 │  ├─errorx
 │  ├─middleware
 │  ├─response
 │  ├─snowflake
 │  └─tool
-├─deploy    
+├─deploy    //依赖
 │  ├─nginx
 │  │  └─conf.d
 │  └─sql
 │      └─init
-├─doc
-├─service
+├─resource  
+├─service   //所有api和rpc服务
 │  ├─chat
 │  │  ├─model
 │  │  └─rpc
@@ -62,6 +70,7 @@
 │  │      │  ├─logic
 │  │      │  ├─server
 │  │      │  └─svc
+│  │      ├─logs
 │  │      └─proto
 │  │          └─pb
 │  ├─comment
@@ -76,6 +85,7 @@
 │  │      │  └─svc
 │  │      └─proto
 │  │          └─pb
+│  ├─dtm
 │  ├─file
 │  │  └─rpc
 │  │      ├─etc
@@ -85,6 +95,7 @@
 │  │      │  ├─logic
 │  │      │  ├─server
 │  │      │  └─svc
+│  │      ├─logs
 │  │      ├─proto
 │  │      │  └─pb
 │  │      └─static
@@ -99,6 +110,7 @@
 │  │      │  ├─logic
 │  │      │  ├─server
 │  │      │  └─svc
+│  │      ├─logs
 │  │      └─proto
 │  │          └─pb
 │  ├─like
@@ -113,18 +125,20 @@
 │  │      ├─like
 │  │      └─proto
 │  │          └─pb
+│  ├─prometheus
 │  ├─user
 │  │  ├─api
 │  │  │  ├─etc
-│  │  │  └─internal
-│  │  │      ├─config
-│  │  │      ├─handler
-│  │  │      │  └─chat
-│  │  │      ├─logic
-│  │  │      │  └─chat
-│  │  │      ├─middleware
-│  │  │      ├─svc
-│  │  │      └─types
+│  │  │  ├─internal
+│  │  │  │  ├─config
+│  │  │  │  ├─handler
+│  │  │  │  │  └─chat
+│  │  │  │  ├─logic
+│  │  │  │  │  └─chat
+│  │  │  │  ├─middleware
+│  │  │  │  ├─svc
+│  │  │  │  └─types
+│  │  │  └─logs
 │  │  ├─model
 │  │  └─rpc
 │  │      ├─etc
@@ -133,6 +147,7 @@
 │  │      │  ├─logic
 │  │      │  ├─server
 │  │      │  └─svc
+│  │      ├─logs
 │  │      ├─proto
 │  │      │  └─pb
 │  │      └─user
@@ -158,5 +173,6 @@
 │          │  └─pb
 │          └─video
 └─sql
+
 
 ```
