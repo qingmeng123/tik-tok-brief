@@ -1,5 +1,6 @@
 ## 功能介绍
 
+### 接口功能
 - 视频：视频推送、视频投稿、发布列表
 - 用户：用户注册、用户登录、用户信息
 - 点赞：点赞操作、点赞列表
@@ -7,20 +8,37 @@
 - 关注：关注操作、关注列表、粉丝列表、好友列表、好友最新消息
 - 聊天：聊天操作、聊天记录
 
+### 部署功能
+- 采用DTM SAGA事务模式对api对多个微服务进行分布式事务处理，保证数据一致性。
+- 雪花算法生成id便于分库分表。
+- 采用grafana进行可视化的服务监控。
+- 采用jaeger进行全链路追踪。
+
+## 演示
+- 效果演示
+<div>
+  <img src="resource/1.jpg" style="display: inline-block; width: 50%;">
+  <img src="resource/2.jpg" style="display: inline-block; width: 50%;">
+</div>
+- 服务监控
+![](resource/服务监控.png)
+- 可视化服务监控
+![](resource/可视化服务监控.png)
+- 链路追踪
+![](resource/链路追踪.png)
 ## 项目部署
 
 安装`docker`和`docker-compose`
 
 - git clone https://github.com/qingmeng123/tik-tok-brief.git
 - 配置各个etc下的yaml文件
-- 使用`docker-compose build`将六个服务构建，再使用`docker-compose up -d`启动服务
+- 使用`docker-compose build`将各个服务构建，再使用`docker-compose up -d`启动服务
 
 ## 接口文档
 见resource文件夹
 
 ## 主要技术
-本项目采用基于`go-zero`的RPC框架，包含了`go-zero`以及相关`go-zero`作者开发的一些中间件，所用到的技术栈基本是`go-zero`
-项目组的自研组件。
+本项目主要采用`go-zero`的RPC框架及其集成的组件
 - Go-zero
 - Mysql
 - Redis
@@ -29,20 +47,20 @@
 ### 其他组件
 - COS
 - nginx
+- sonyflake
 - prometheus
 - grafana
 - DTM
 - jaeger
 - logx
 - golang-jwt
-- sonyflake
 - ffmpeg-go
 - jinzhu/copier 
 
 ## 调用关系
 ![](resource/img.png)
-不同的请求通过nginx反向代理到不同的api服务中，api调用多个rpc服务，rpc连接各自的数据库，雪花算法生成id便于分库分表。
-采用DTM SAGA事务模式对api对多个微服务进行分布式事务处理，保证数据一致性。
+- 不同的请求通过nginx反向代理到不同的api服务中，api调用多个rpc服务，rpc连接各自的数据库。
+
 
 ## 目录结构
 ```
