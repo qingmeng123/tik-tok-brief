@@ -19,7 +19,7 @@
 <div>
 <style>
     img {
-        height: 200px;
+        height: 100px;
     }
 </style>
   <img src="resource/1.jpg" style="display: inline-block; width: 50%;"><img src="resource/2.jpg" style="display: inline-block; width: 50%;">
