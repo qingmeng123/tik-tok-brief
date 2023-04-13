@@ -16,11 +16,6 @@
 
 ## 演示
 - 效果演示
-<style>
-    img {
-        height: 100px;
-    }
-</style>
 <div>
   <img src="resource/1.jpg" style="display: inline-block; width: 50%;"><img src="resource/2.jpg" style="display: inline-block; width: 50%;">
   <img src="resource/3.jpg" style="display: inline-block; width: 33%;"><img src="resource/4.jpg" style="display: inline-block; width: 33%;"><img src="resource/5.jpg" style="display: inline-block; width: 33%;">
