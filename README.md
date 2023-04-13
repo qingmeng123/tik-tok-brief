@@ -17,9 +17,9 @@
 ## 演示
 - 效果演示
 <div>
-  <img src="resource/1.jpg" style="display: inline-block; width: 50%;">
-  <img src="resource/2.jpg" style="display: inline-block; width: 50%;">
+  <img src="resource/1.jpg" style="display: inline-block; width: 50%;"><img src="resource/2.jpg" style="display: inline-block; width: 50%;">
 </div>
+
 - 服务监控
 ![](resource/服务监控.png)
 - 可视化服务监控
