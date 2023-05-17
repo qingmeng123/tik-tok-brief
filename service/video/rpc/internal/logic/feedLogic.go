@@ -56,6 +56,6 @@ func (l *FeedLogic) Feed(in *pb.FeedReq) (*pb.FeedResp, error) {
 		return nil, errorx.NewInternalErr()
 	}
 
-	now := time.Now().Unix()
-	return &pb.FeedResp{NextTime: &now, VideoList: res}, nil
+	nextTime := videos[len(videos)-1].CreateTime.Unix()
+	return &pb.FeedResp{NextTime: &nextTime, VideoList: res}, nil
 }

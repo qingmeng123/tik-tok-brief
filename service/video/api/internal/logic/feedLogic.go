@@ -116,6 +116,8 @@ func (l *FeedLogic) Feed(req *types.FeedReq) (resp *types.FeedResp, err error) {
 			}
 		}
 	}
+	//获取视频最后时间
+	resp.NextTime = feedResp.GetNextTime()
 	resp.StatusCode = errorx.OK
 	resp.StatusMsg = errorx.SUCCESS
 
